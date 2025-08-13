@@ -208,12 +208,8 @@ def register():
     """User registration"""
     try:
         data = request.get_json()
-        
-@app.route('/')
-def serve_dashboard():
-    return send_from_directory('static', 'index.html')
-        
-        if not data or not data.get('email') or not data.get('password'):
+     
+       if not data or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Email and password required'}), 400
         
         email = data['email'].lower().strip()
@@ -486,6 +482,10 @@ def serve_dashboard():
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
+    
+@app.route('/')
+def serve_dashboard():
+    return send_from_directory('static', 'index.html')
 
 # Error handlers
 @app.errorhandler(404)
