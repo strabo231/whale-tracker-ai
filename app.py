@@ -209,7 +209,7 @@ def register():
     try:
         data = request.get_json()
      
-       if not data or not data.get('email') or not data.get('password'):
+        if not data or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Email and password required'}), 400
         
         email = data['email'].lower().strip()
