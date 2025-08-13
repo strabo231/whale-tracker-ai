@@ -8,6 +8,7 @@ from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask import send_from_directory
 import sqlite3
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -473,6 +474,14 @@ def get_user_profile():
     except Exception as e:
         logger.error(f"Profile error: {e}")
         return jsonify({'error': 'Failed to fetch profile'}), 500
+
+@app.route('/')
+def serve_dashboard():
+    return send_from_directory('static', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('static', path)
 
 # Error handlers
 @app.errorhandler(404)
