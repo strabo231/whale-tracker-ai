@@ -528,3 +528,4 @@ if __name__ == '__main__':
     else:
         logger.info("🔧 Starting Whale Tracker API in DEVELOPMENT mode...")
         app.run(debug=True, host='0.0.0.0', port=port)
+# Force redeploy Wed Aug 13 05:04:51 PM EDT 2025
