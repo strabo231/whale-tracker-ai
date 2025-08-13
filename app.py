@@ -475,10 +475,6 @@ def get_user_profile():
         logger.error(f"Profile error: {e}")
         return jsonify({'error': 'Failed to fetch profile'}), 500
 
-@app.route('/')
-def serve_dashboard():
-    return send_from_directory('static', 'index.html')
-
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
