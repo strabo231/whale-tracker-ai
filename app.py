@@ -479,6 +479,10 @@ def get_user_profile():
 def serve_static(path):
     return send_from_directory('static', path)
     
+@app.route('/static/<path:filename>')
+def serve_static_files(filename):
+    return send_from_directory('static/static', filename)
+    
 @app.route('/')
 def serve_dashboard():
     return send_from_directory('static', 'index.html')
