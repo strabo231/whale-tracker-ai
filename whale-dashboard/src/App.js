@@ -12,7 +12,7 @@ const WhaleTrackerBetaDashboard = () => {
   const [authForm, setAuthForm] = useState({ email: '', password: '' });
 
   // API base URL
-  const API_BASE = 'http://localhost:8000';
+  const API_BASE = 'https://whale-tracker-production-3fb5.up.railway.app';
 
   // Check if user is authenticated
   useEffect(() => {
