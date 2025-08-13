@@ -209,6 +209,10 @@ def register():
     try:
         data = request.get_json()
         
+@app.route('/')
+def serve_dashboard():
+    return send_from_directory('static', 'index.html')
+        
         if not data or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Email and password required'}), 400
         
@@ -498,17 +502,12 @@ def rate_limit_handler(e):
     return jsonify({'error': 'Rate limit exceeded', 'message': str(e.description)}), 429
 
 if __name__ == '__main__':
-    # Initialize database
-    init_db()
-    
-    # Production vs Development settings
     port = int(os.environ.get('PORT', 8000))
     
-    if app.config['ENVIRONMENT'] == 'production':
+    # Force production mode on Railway
+    if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('PORT'):
         logger.info("🚀 Starting Whale Tracker API in PRODUCTION mode...")
         app.run(debug=False, host='0.0.0.0', port=port)
     else:
         logger.info("🔧 Starting Whale Tracker API in DEVELOPMENT mode...")
-        logger.info(f"🌐 API available at: http://localhost:{port}")
-        logger.info(f"📊 Health check: http://localhost:{port}/api/health")
         app.run(debug=True, host='0.0.0.0', port=port)
