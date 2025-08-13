@@ -475,6 +475,23 @@ def get_user_profile():
         logger.error(f"Profile error: {e}")
         return jsonify({'error': 'Failed to fetch profile'}), 500
 
+@app.route('/signup')
+def signup_page():
+    return '''
+    <html><head><title>Sign Up</title><style>
+    body{background:#1a1a2e;color:white;font-family:Arial;text-align:center;padding:50px}
+    input{padding:10px;margin:10px;width:200px}
+    .btn{background:#ff6b6b;color:white;padding:15px 30px;border:none;border-radius:5px}
+    </style></head><body>
+    <h1>🐋 Whale Tracker Beta Signup</h1>
+    <form action="/api/auth/register" method="post">
+    <input type="email" name="email" placeholder="Email" required><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <button class="btn">Start Beta - $19/month</button>
+    </form>
+    </body></html>
+    '''
+
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
