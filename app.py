@@ -40,7 +40,7 @@ STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_your_webh
 
 # Enable CORS with specific origins for production
 if app.config['ENVIRONMENT'] == 'production':
-    CORS(app, origins=['https://whale-tracker-ai.up.railway.app/'])
+    CORS(app, origins=['https://whale-tracker-ai.up.railway.app'])
 else:
     CORS(app)  # Allow all origins in development
 
