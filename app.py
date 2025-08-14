@@ -191,6 +191,14 @@ def subscription_required(required_tier='pro'):
     return decorator
 
 # Public endpoints
+@app.route('/init-db')
+def initialize_database():
+    try:
+        init_db()
+        return jsonify({'status': 'Database initialized successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/health', methods=['GET'])
 @limiter.limit("10 per minute")
 def health_check():
