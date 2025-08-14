@@ -110,7 +110,7 @@ def init_db():
         # Add demo data if empty (for development)
         if app.config['ENVIRONMENT'] == 'development':
             cursor = conn.execute('SELECT COUNT(*) FROM whales')
-            if cursor.fetchone()[0] == 0:
+            if cursorfetchone()[0] == 0:
                 demo_whales = [
                     ('8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6', 125000, 'r/solana', 85, 'solana', datetime.now(), datetime.now(), 1),
                     ('3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K', 89000, 'r/cryptocurrency', 78, 'ethereum', datetime.now(), datetime.now(), 1)
@@ -402,31 +402,32 @@ def stripe_webhook():
 # Protected endpoints
 @app.route('/api/whales/top', methods=['GET'])
 @limiter.limit("100 per hour")
-@token_required  
+@token_required
 def get_top_whales():
+    """Get top whales - requires paid subscription"""
     try:
         conn = get_db_connection()
-        cursor = conn.execute('SELECT subscription_tier FROM users WHERE id = ?', (g.current_user_id,))
-        user = cursor.fetchone()
-        
-        # BLOCK FREE USERS
-        if user['subscription_tier'] == 'free':
-            return jsonify({
-                'error': 'Payment required',
-                'message': 'Beta access requires payment',
-                'redirect': 'payment'
-            }), 402  # Payment Required
         
         # Check subscription tier
         cursor = conn.execute('SELECT subscription_tier FROM users WHERE id = ?', (g.current_user_id,))
         user = cursor.fetchone()
         
+        # BLOCK FREE USERS - PAYWALL HERE!
+        if user['subscription_tier'] == 'free':
+            conn.close()
+            return jsonify({
+                'error': 'Payment required',
+                'message': 'Beta access requires $19/month subscription',
+                'redirect': 'payment'
+            }), 402  # Payment Required
+        
+        # Only paid users get past this point
         limit = 5 if user['subscription_tier'] == 'free' else 100
         
         cursor = conn.execute('''SELECT * FROM whales 
                                ORDER BY balance DESC 
                                LIMIT ?''', (limit,))
-        
+
         whales = []
         for row in cursor.fetchall():
             whales.append({
