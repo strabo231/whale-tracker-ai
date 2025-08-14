@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, Wallet, Eye, RefreshCw, Crown, Zap, Target, Lock, Star, Rocket, Users, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback} from 'react';
+import { TrendingUp, Wallet, Eye, RefreshCw, Crown, Zap, Target, Star, Rocket, Users, AlertCircle } from 'lucide-react';
 
 const WhaleTrackerBetaDashboard = () => {
   const [whales, setWhales] = useState([]);
@@ -12,18 +12,18 @@ const WhaleTrackerBetaDashboard = () => {
   const [authForm, setAuthForm] = useState({ email: '', password: '' });
 
   // API base URL
-  const API_BASE = 'https://whale-tracker-production-3fb5.up.railway.app';
+  const API_BASE = 'https://whale-tracker-ai.up.railway.app/';
 
   // Check if user is authenticated
   useEffect(() => {
-    const token = localStorage.getItem('whale_token');
-    if (token) {
-      fetchUserProfile(token);
-    } else {
-      setShowAuth(true);
-      setLoading(false);
-    }
-  }, []);
+  const token = localStorage.getItem('whale_token');
+  if (token) {
+    fetchUserProfile(token);
+  } else {
+    setShowAuth(true);
+    setLoading(false);
+  }
+}, []);
 
   const fetchUserProfile = async (token) => {
     try {
@@ -47,44 +47,76 @@ const WhaleTrackerBetaDashboard = () => {
     }
   };
 
-  const fetchWhales = async (token = localStorage.getItem('whale_token')) => {
+const fetchWhales = async (token = localStorage.getItem('whale_token')) => {
+  try {
+    setLoading(true);
+    
+    // Try our new whale discovery API first
     try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE}/api/whales/top`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch('http://localhost:8000/api/whales/top150', {
+        headers: { 
+          'Authorization': `Bearer test_pro_key`,  // Replace with real token logic
+          'Content-Type': 'application/json' 
+        }
       });
       
       if (response.ok) {
         const data = await response.json();
-        setWhales(data.whales || []);
+        
+        // Transform our whale data to match your UI format
+        const transformedWhales = data.data.whales.map((whale, index) => ({
+          address: whale.address,
+          balance: whale.total_volume_7d, // Use 7-day volume as balance
+          source: `Rank #${whale.rank}`,
+          quality_score: Math.round(whale.whale_score * 100), // Convert to percentage
+          first_seen: whale.last_active || new Date().toISOString()
+        }));
+        
+        setWhales(transformedWhales);
         setLastUpdate(new Date());
         setError(null);
-      } else {
-        throw new Error('Failed to fetch whales');
+        return; // Success - exit function
       }
-    } catch (err) {
-      setError(`API Error: ${err.message}`);
-      // Demo data for preview
-      setWhales([
-        {
-          address: '8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6',
-          balance: 125000,
-          source: 'r/solana',
-          quality_score: 85,
-          first_seen: '2025-01-15T10:30:00Z'
-        },
-        {
-          address: '3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K',
-          balance: 89000,
-          source: 'r/cryptocurrency', 
-          quality_score: 78,
-          first_seen: '2025-01-15T09:15:00Z'
-        }
-      ]);
-    } finally {
-      setLoading(false);
+    } catch (backendError) {
+      console.log('Backend not available, falling back to original API');
     }
-  };
+    
+    // Fallback to your original API
+    const response = await fetch(`${API_BASE}/api/whales/top`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      setWhales(data.whales || []);
+      setLastUpdate(new Date());
+      setError(null);
+    } else {
+      throw new Error('Failed to fetch whales');
+    }
+  } catch (err) {
+    setError(`API Error: ${err.message}`);
+    // Your existing demo data as fallback
+    setWhales([
+      {
+        address: '8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6',
+        balance: 125000,
+        source: 'r/solana',
+        quality_score: 85,
+        first_seen: '2025-01-15T10:30:00Z'
+      },
+      {
+        address: '3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K',
+        balance: 89000,
+        source: 'r/cryptocurrency', 
+        quality_score: 78,
+        first_seen: '2025-01-15T09:15:00Z'
+      }
+    ]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleAuth = async (e) => {
     e.preventDefault();
