@@ -40,7 +40,7 @@ STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', 'whsec_your_webh
 
 # Enable CORS with specific origins for production
 if app.config['ENVIRONMENT'] == 'production':
-    CORS(app, origins=['https://your-domain.com'])
+    CORS(app, origins=['https://whale-tracker-ai.up.railway.app/'])
 else:
     CORS(app)  # Allow all origins in development
 
@@ -492,17 +492,17 @@ def signup_page():
     </body></html>
     '''
 
-@app.route('/<path:path>')
-def serve_static(path):
-    return send_from_directory('static', path)
-    
+@app.route('/')
+def serve_dashboard():
+    return send_from_directory('static', 'index.html')
+   
 @app.route('/static/<path:filename>')
 def serve_static_files(filename):
     return send_from_directory('static/static', filename)
     
-@app.route('/')
-def serve_dashboard():
-    return send_from_directory('static', 'index.html')
+# @app.route('/<path:path>')
+# def serve_static(path):
+#   return send_from_directory('static', path)
 
 # Error handlers
 @app.errorhandler(404)
@@ -519,6 +519,7 @@ def rate_limit_handler(e):
     return jsonify({'error': 'Rate limit exceeded', 'message': str(e.description)}), 429
 
 if __name__ == '__main__':
+    init_db()
     port = int(os.environ.get('PORT', 8000))
     
     # Force production mode on Railway
