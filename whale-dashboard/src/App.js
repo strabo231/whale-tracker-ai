@@ -11,11 +11,11 @@ const WhaleTrackerBetaDashboard = () => {
   const [authMode, setAuthMode] = useState('login');
   const [authForm, setAuthForm] = useState({ email: '', password: '' });
 
-  // API base URL
-  const API_BASE = 'https://whale-tracker-ai.up.railway.app/';
+ // API base URL  
+const API_BASE = 'https://whale-tracker-ai.up.railway.app';  // Remove trailing slash
 
-  // Check if user is authenticated
-  useEffect(() => {
+// Check if user is authenticated
+useEffect(() => {
   const token = localStorage.getItem('whale_token');
   if (token) {
     fetchUserProfile(token);
@@ -25,66 +25,38 @@ const WhaleTrackerBetaDashboard = () => {
   }
 }, []);
 
-  const fetchUserProfile = async (token) => {
-    try {
-      const response = await fetch(`${API_BASE}/api/user/profile`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        setShowAuth(false);
-        fetchWhales(token);
-      } else {
-        localStorage.removeItem('whale_token');
-        setShowAuth(true);
-        setLoading(false);
-      }
-    } catch (err) {
+const fetchUserProfile = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE}/api/user/profile`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (response.ok) {
+      const userData = await response.json();
+      setUser(userData);
+      setShowAuth(false);
+      fetchWhales(token);
+    } else {
+      localStorage.removeItem('whale_token');
       setShowAuth(true);
       setLoading(false);
     }
-  };
+  } catch (err) {
+    setShowAuth(true);
+    setLoading(false);
+  }
+};
 
-const fetchWhales = async (token = localStorage.getItem('whale_token')) => {
+const fetchWhales = async (token) => {
   try {
-    setLoading(true);
-    
-    // Try our new whale discovery API first
-    try {
-      const response = await fetch('http://localhost:8000/api/whales/top150', {
-        headers: { 
-          'Authorization': `Bearer test_pro_key`,  // Replace with real token logic
-          'Content-Type': 'application/json' 
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Transform our whale data to match your UI format
-        const transformedWhales = data.data.whales.map((whale, index) => ({
-          address: whale.address,
-          balance: whale.total_volume_7d, // Use 7-day volume as balance
-          source: `Rank #${whale.rank}`,
-          quality_score: Math.round(whale.whale_score * 100), // Convert to percentage
-          first_seen: whale.last_active || new Date().toISOString()
-        }));
-        
-        setWhales(transformedWhales);
-        setLastUpdate(new Date());
-        setError(null);
-        return; // Success - exit function
-      }
-    } catch (backendError) {
-      console.log('Backend not available, falling back to original API');
-    }
-    
-    // Fallback to your original API
     const response = await fetch(`${API_BASE}/api/whales/top`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+
+    if (response.status === 402) {
+      handleStripeCheckout();
+      return;
+    }
     
     if (response.ok) {
       const data = await response.json();
@@ -96,7 +68,6 @@ const fetchWhales = async (token = localStorage.getItem('whale_token')) => {
     }
   } catch (err) {
     setError(`API Error: ${err.message}`);
-    // Your existing demo data as fallback
     setWhales([
       {
         address: '8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6',
@@ -118,57 +89,78 @@ const fetchWhales = async (token = localStorage.getItem('whale_token')) => {
   }
 };
 
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    try {
-      const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-      const response = await fetch(`${API_BASE}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(authForm)
-      });
+const handleAuth = async (e) => {
+  e.preventDefault();
+  try {
+    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(authForm)
+    });
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        const token = data.token || data.api_key;
-        localStorage.setItem('whale_token', token);
-        fetchUserProfile(token);
-        setAuthForm({ email: '', password: '' });
-      } else {
-        setError(data.error || 'Authentication failed');
-      }
-    } catch (err) {
-      setError('Connection failed');
+    const data = await response.json();
+    
+    if (response.ok) {
+      const token = data.token || data.api_key;
+      localStorage.setItem('whale_token', token);
+      fetchUserProfile(token);
+      setAuthForm({ email: '', password: '' });
+    } else {
+      setError(data.error || 'Authentication failed');
     }
-  };
+  } catch (err) {
+    setError('Connection failed');
+  }
+};
 
-  const logout = () => {
-    localStorage.removeItem('whale_token');
-    setUser(null);
-    setShowAuth(true);
-    setWhales([]);
-  };
+const handleStripeCheckout = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/api/create-checkout-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: authForm.email })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok && data.checkout_url) {
+      window.location.href = data.checkout_url;
+    } else {
+      setError('Failed to create checkout session');
+    }
+  } catch (err) {
+    setError('Payment system error');
+  }
+};
 
-  const formatBalance = (balance) => {
-    if (balance >= 1000000) return `$${(balance / 1000000).toFixed(1)}M`;
-    if (balance >= 1000) return `$${(balance / 1000).toFixed(0)}K`;
-    return `$${balance}`;
-  };
+const logout = () => {
+  localStorage.removeItem('whale_token');
+  setUser(null);
+  setShowAuth(true);
+  setWhales([]);
+};
 
-  const formatAddress = (address) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+const formatBalance = (balance) => {
+  if (balance >= 1000000) return `$${(balance / 1000000).toFixed(1)}M`;
+  if (balance >= 1000) return `$${(balance / 1000).toFixed(0)}K`;
+  return `$${balance}`;
+};
 
-  const getQualityColor = (score) => {
-    if (score >= 80) return 'text-green-400 bg-green-400/10';
-    if (score >= 60) return 'text-yellow-400 bg-yellow-400/10';
-    return 'text-red-400 bg-red-400/10';
-  };
+const formatAddress = (address) => {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
 
-  // Authentication UI
-  if (showAuth) {
-    return (
+const getQualityColor = (score) => {
+  if (score >= 80) return 'text-green-400 bg-green-400/10';
+  if (score >= 60) return 'text-yellow-400 bg-yellow-400/10';
+  return 'text-red-400 bg-red-400/10';
+};
+
+// Authentication UI
+if (showAuth) {
+  return (
+ 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">
           {/* Beta Banner */}

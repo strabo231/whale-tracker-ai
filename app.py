@@ -402,11 +402,20 @@ def stripe_webhook():
 # Protected endpoints
 @app.route('/api/whales/top', methods=['GET'])
 @limiter.limit("100 per hour")
-@token_required
+@token_required  
 def get_top_whales():
-    """Get top whales - free tier limited to 5"""
     try:
         conn = get_db_connection()
+        cursor = conn.execute('SELECT subscription_tier FROM users WHERE id = ?', (g.current_user_id,))
+        user = cursor.fetchone()
+        
+        # BLOCK FREE USERS
+        if user['subscription_tier'] == 'free':
+            return jsonify({
+                'error': 'Payment required',
+                'message': 'Beta access requires payment',
+                'redirect': 'payment'
+            }), 402  # Payment Required
         
         # Check subscription tier
         cursor = conn.execute('SELECT subscription_tier FROM users WHERE id = ?', (g.current_user_id,))
