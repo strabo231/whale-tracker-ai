@@ -110,7 +110,7 @@ def init_db():
         # Add demo data if empty (for development)
         if app.config['ENVIRONMENT'] == 'development':
             cursor = conn.execute('SELECT COUNT(*) FROM whales')
-            if cursorfetchone()[0] == 0:
+            if cursor.fetchone()[0] == 0:
                 demo_whales = [
                     ('8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6', 125000, 'r/solana', 85, 'solana', datetime.now(), datetime.now(), 1),
                     ('3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K', 89000, 'r/cryptocurrency', 78, 'ethereum', datetime.now(), datetime.now(), 1)
