@@ -12,12 +12,6 @@ from flask import send_from_directory
 import sqlite3
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
-import praw  # Reddit API
-import re
-import requests
-import time
-import threading
-from apscheduler.schedulers.background import BackgroundScheduler
 # Configure logging for production
 logging.basicConfig(
     level=logging.INFO,
