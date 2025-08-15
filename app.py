@@ -434,7 +434,7 @@ def get_top_whales():
         user = cursor.fetchone()
         
         # BLOCK FREE USERS - PAYWALL HERE!
-        if user['subscription_tier'] == 'free':
+        if user['subscription_tier'] == 'free' or user['subscription_tier'] is None:
             conn.close()
             return jsonify({
                 'error': 'Payment required',
