@@ -12,7 +12,12 @@ from flask import send_from_directory
 import sqlite3
 import logging
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import praw  # Reddit API
+import re
+import requests
+import time
+import threading
+from apscheduler.schedulers.background import BackgroundScheduler
 # Configure logging for production
 logging.basicConfig(
     level=logging.INFO,
@@ -295,6 +300,24 @@ def login():
     except Exception as e:
         logger.error(f"Login error: {e}")
         return jsonify({'error': 'Login failed'}), 500
+@app.route('/api/fix-users', methods=['GET'])
+def fix_users():
+    """Fix users with NULL subscription_tier"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.execute("SELECT COUNT(*) FROM users WHERE subscription_tier IS NULL")
+        count_before = cursor.fetchone()[0]
+        
+        conn.execute("UPDATE users SET subscription_tier = 'free' WHERE subscription_tier IS NULL")
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'message': 'Users fixed successfully',
+            'users_fixed': count_before
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500        
 
 # Stripe endpoints
 @app.route('/api/create-checkout-session', methods=['POST'])
@@ -474,9 +497,11 @@ def get_user_profile():
         
         conn.close()
         
+        subscription_tier = user['subscription_tier'] or 'free'
+        
         return jsonify({
             'email': user['email'],
-            'subscription_tier': user['subscription_tier'],
+            'subscription_tier': subscription_tier
             'created_at': user['created_at'],
             'total_requests': usage['total_requests'] or 0
         })
