@@ -34,6 +34,14 @@ const fetchUserProfile = async (token) => {
     if (response.ok) {
       const userData = await response.json();
       setUser(userData);
+      
+      // Check subscription before showing dashboard
+      if (userData.subscription_tier === 'free') {
+        setShowAuth(true); // Keep them on auth screen with paywall
+        setLoading(false);
+        return;
+      }
+      
       setShowAuth(false);
       fetchWhales(token);
     } else {
