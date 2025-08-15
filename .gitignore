@@ -38,3 +38,6 @@ build/
 .env
 whale_env/
 *.db
+.env*
+whale_env/
+*.db
