@@ -993,7 +993,383 @@ def login_page():
 
 @app.route('/')
 def home():
-    return landing page()
+    return '''[<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whale Tracker - Discover Crypto Whales Before Everyone Else</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+        }
+        .tier-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tier-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .popular-badge {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            background: linear-gradient(90deg, #7c3aed, #0891b2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black/20 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-purple-500 to-cyan-500 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                        Whale Tracker
+                    </h1>
+                    <p class="text-gray-400 text-sm">AI-Powered Whale Discovery</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/login" class="text-gray-300 hover:text-white transition-colors">Login</a>
+                <a href="#pricing" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient py-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full text-white text-sm font-bold mb-8">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                BETA ACCESS - LIMITED TIME
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                Discover Crypto <br>
+                <span class="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    Whales
+                </span> First
+            </h1>
+            
+            <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                Track the biggest crypto holders before they make their moves. Our AI scans Reddit communities 
+                to discover whale wallets with massive holdings in real-time.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <a href="#pricing" class="cta-button px-8 py-4 rounded-lg font-semibold text-white text-lg">
+                    Start Tracking Whales - $19/month
+                </a>
+                <a href="#how-it-works" class="px-8 py-4 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
+                    See How It Works
+                </a>
+            </div>
+            
+            <!-- Social Proof -->
+            <div class="flex items-center justify-center space-x-8 text-gray-400 text-sm">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>
+                    Reddit Integration
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>
+                    AI-Powered Discovery
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                    </svg>
+                    Real-time Updates
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 bg-black/20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">How Whale Tracker Works</h2>
+                <p class="text-gray-400 text-lg">Advanced AI scans crypto communities to find whale wallets</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">AI Scans Reddit</h3>
+                    <p class="text-gray-400">Our AI monitors r/solana, r/cryptocurrency, and other communities for whale mentions and wallet addresses.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Verifies & Scores</h3>
+                    <p class="text-gray-400">Each wallet is verified for balance and activity, then scored based on holding size and community credibility.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-gradient-to-r from-green-500 to-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Real-time Dashboard</h3>
+                    <p class="text-gray-400">Access your personalized whale tracker dashboard with live updates and detailed analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-gray-400 text-lg">Choose the plan that fits your trading strategy</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="tier-card bg-gray-900/50 border border-gray-700 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-4">Free</h3>
+                    <div class="text-4xl font-bold mb-6">$0<span class="text-gray-400 text-lg">/month</span></div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            View whale discovery info
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"/>
+                            </svg>
+                            No whale data access
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"/>
+                            </svg>
+                            No premium features
+                        </li>
+                    </ul>
+                    <a href="/register" class="block w-full py-3 text-center border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors">
+                        Get Started Free
+                    </a>
+                </div>
+
+                <!-- Beta Tier (Popular) -->
+                <div class="tier-card bg-gradient-to-b from-purple-900/50 to-cyan-900/50 border-2 border-purple-500 rounded-xl p-8 relative">
+                    <div class="popular-badge absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white text-sm font-bold">
+                        🔥 MOST POPULAR
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Beta Access</h3>
+                    <div class="text-4xl font-bold mb-6">$19<span class="text-gray-400 text-lg">/month</span></div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Up to 50 tracked whales
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Reddit whale discovery
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Quality scoring & verification
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="font-bold text-yellow-400">FREE upgrade to PRO!</span>
+                        </li>
+                    </ul>
+                    <a href="/api/auth/register" class="cta-button block w-full py-3 text-center rounded-lg font-semibold text-white">
+                        Start Beta Access
+                    </a>
+                </div>
+
+                <!-- Pro Tier -->
+                <div class="tier-card bg-gray-900/50 border border-gray-700 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-4">PRO</h3>
+                    <div class="text-4xl font-bold mb-6">$49<span class="text-gray-400 text-lg">/month</span></div>
+                    <div class="bg-gradient-to-r from-purple-500/20 to-cyan-500/20 rounded-lg p-3 mb-6">
+                        <p class="text-sm text-center">🚀 Coming in 1-2 weeks</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Unlimited tracked whales
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            DEX integration & analytics
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Real-time alerts & notifications
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            Multi-chain support
+                        </li>
+                    </ul>
+                    <button disabled class="block w-full py-3 text-center border border-gray-600 rounded-lg bg-gray-800 text-gray-500 cursor-not-allowed">
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Beta Bonus -->
+            <div class="mt-12 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-xl p-8 text-center">
+                <h3 class="text-2xl font-bold mb-4 flex items-center justify-center">
+                    <svg class="w-6 h-6 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    🎉 Beta Pioneer Bonus
+                </h3>
+                <p class="text-gray-300 text-lg mb-4">
+                    Join during Beta and get automatically upgraded to PRO when it launches - completely FREE! 
+                    That's a $30/month value at no extra cost.
+                </p>
+                <p class="text-sm text-gray-400">
+                    Lock in your Beta price and never pay PRO pricing. Limited time offer for early adopters.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-purple-900/50 to-cyan-900/50">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ready to Track Crypto Whales?</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Join the Beta today and start discovering whale wallets before the competition.
+            </p>
+            <a href="/api/auth/register" class="cta-button inline-block px-10 py-4 rounded-lg font-semibold text-white text-lg mr-4">
+                Start Beta Access - $19/month
+            </a>
+            <a href="/login" class="inline-block px-8 py-4 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
+                Already have an account?
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/40 border-t border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="bg-gradient-to-r from-purple-500 to-cyan-500 p-2 rounded-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold">Whale Tracker</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        AI-powered whale discovery for crypto traders and investors.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#how-it-works" class="hover:text-white transition-colors">How it Works</a></li>
+                        <li><a href="/api/health" class="hover:text-white transition-colors">API Status</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="mailto:support@whaletracker.com" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="/login" class="hover:text-white transition-colors">Login Help</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Data Sources</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li>✓ Reddit Communities</li>
+                        <li>✓ Blockchain Verification</li>
+                        <li>✓ AI Quality Scoring</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 Whale Tracker. Track responsibly.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>]'''
     
 @app.route('/dashboard')
 def dashboard():
