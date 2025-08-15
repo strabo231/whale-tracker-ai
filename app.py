@@ -317,7 +317,11 @@ def fix_users():
             'users_fixed': count_before
         })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500        
+        return jsonify({'error': str(e)}), 500  
+        
+@app.route('/api/test-endpoint', methods=['GET'])
+def test_endpoint():
+    return jsonify({'message': 'Test endpoint works!'})
 
 # Stripe endpoints
 @app.route('/api/create-checkout-session', methods=['POST'])
