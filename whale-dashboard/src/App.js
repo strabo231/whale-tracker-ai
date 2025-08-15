@@ -63,6 +63,9 @@ const fetchWhales = async (token) => {
 
     if (response.status === 402) {
       setShowAuth(true);
+      setUser(null);
+      setWhales([]);   
+      setError(null); 
       setLoading(false);
       handleStripeCheckout();
       return;
