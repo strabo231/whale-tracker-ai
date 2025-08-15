@@ -348,7 +348,7 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='subscription',
-            success_url=request.host_url + 'dashboard?session_id={CHECKOUT_SESSION_ID}',
+            success_url=request.host_url + 'success?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=request.host_url + 'signup?cancelled=true',
             metadata={
                 'product': 'whale_tracker_beta',
@@ -523,6 +523,33 @@ def signup_page():
     <input type="password" name="password" placeholder="Password" required><br>
     <button class="btn">Start Beta - $19/month</button>
     </form>
+    </body></html>
+    '''
+    
+@app.route('/success')
+def payment_success():
+    return '''
+    <html><head><title>Payment Success</title>
+    <style>
+    body{background:#1a1a2e;color:white;font-family:Arial;text-align:center;padding:50px}
+    .success-box{background:#2d2d4a;border:2px solid #4CAF50;border-radius:15px;padding:30px;max-width:500px;margin:0 auto}
+    .btn{background:#ff6b6b;color:white;padding:15px 30px;border:none;border-radius:5px;text-decoration:none;display:inline-block;margin-top:20px}
+    .btn:hover{background:#ff5555}
+    .check{font-size:60px;color:#4CAF50;margin-bottom:20px}
+    </style></head><body>
+    <div class="success-box">
+    <div class="check">✅</div>
+    <h1>🎉 Welcome to Whale Tracker Beta!</h1>
+    <p>Payment successful! Your account has been upgraded to Beta access.</p>
+    <p>You now have access to:</p>
+    <ul style="text-align:left;display:inline-block">
+    <li>🐋 Up to 50 tracked whales</li>
+    <li>📊 Quality scoring & verification</li>
+    <li>🔥 Reddit whale discovery</li>
+    <li>👑 FREE upgrade to PRO when it launches!</li>
+    </ul>
+    <a href="/" class="btn">Go to Dashboard</a>
+    </div>
     </body></html>
     '''
 
