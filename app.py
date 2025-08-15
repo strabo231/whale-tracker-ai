@@ -211,12 +211,15 @@ def register():
      
         if not data or not data.get('email') or not data.get('password'):
             return jsonify({'error': 'Email and password required'}), 400
-            
+        
+        email = data['email'].lower().strip()  # ← Move this up
+        password = data['password']
+        
+        # Now validate email AFTER it's defined
         if not is_valid_email(email):
             return jsonify({'error': 'Please enter a valid email address'}), 400
         
-        email = data['email'].lower().strip()
-        password = data['password']
+        # Rest of your code...
         
         # Basic password validation
         if len(password) < 8:
@@ -982,7 +985,7 @@ def register_page():
             }
             
             // Basic email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^@]+@[^@]+\.[^@]+$/;
             if (!emailRegex.test(email)) {
                 errorDiv.textContent = 'Please enter a valid email address';
                 errorDiv.style.display = 'block';
