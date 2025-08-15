@@ -497,6 +497,7 @@ def get_user_profile():
         # Get usage stats (privacy-focused)
         cursor = conn.execute('''SELECT SUM(request_count) as total_requests
                                FROM api_usage WHERE user_id = ?''', (g.current_user_id,))
+
         usage = cursor.fetchone()
         
         conn.close()
@@ -505,7 +506,7 @@ def get_user_profile():
         
         return jsonify({
             'email': user['email'],
-            'subscription_tier': subscription_tier
+            'subscription_tier': subscription_tier,
             'created_at': user['created_at'],
             'total_requests': usage['total_requests'] or 0
         })
