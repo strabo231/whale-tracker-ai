@@ -62,6 +62,8 @@ const fetchWhales = async (token) => {
     });
 
     if (response.status === 402) {
+      setShowAuth(true);
+      setLoading(false);
       handleStripeCheckout();
       return;
     }
