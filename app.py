@@ -559,7 +559,7 @@ def payment_success():
     <li>🔥 Reddit whale discovery</li>
     <li>👑 FREE upgrade to PRO when it launches!</li>
     </ul>
-    <a href="/" class="btn">Go to Dashboard</a>
+    <a href="/dashboard" class="btn">Go to Dashboard</a>
     </div>
     </body></html>
     '''
