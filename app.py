@@ -793,7 +793,7 @@ def landing_page():
                             <span class="font-bold text-yellow-400">FREE upgrade to PRO!</span>
                         </li>
                     </ul>
-                    <a href="/api/auth/register" class="cta-button block w-full py-3 text-center rounded-lg font-semibold text-white">
+                    <a href="/register" class="cta-button block w-full py-3 text-center rounded-lg font-semibold text-white">
                         Start Beta Access
                     </a>
                 </div>
@@ -863,7 +863,7 @@ def landing_page():
             <p class="text-xl text-gray-300 mb-8">
                 Join the Beta today and start discovering whale wallets before the competition.
             </p>
-            <a href="/api/auth/register" class="cta-button inline-block px-10 py-4 rounded-lg font-semibold text-white text-lg mr-4">
+            <a href="/register" class="cta-button inline-block px-10 py-4 rounded-lg font-semibold text-white text-lg mr-4">
                 Start Beta Access - $19/month
             </a>
             <a href="/login" class="inline-block px-8 py-4 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
@@ -940,6 +940,86 @@ def landing_page():
     </script>
 </body>
 </html>]'''
+
+@app.route('/register', methods=['GET'])
+def register_page():
+    return '''
+    <html><head><title>Sign Up - Whale Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body {background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);}</style>
+    </head><body class="min-h-screen flex items-center justify-center text-white">
+    <div class="max-w-md w-full mx-4 bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Start Beta Access</h1>
+        <form id="registerForm" class="space-y-4">
+            <input type="email" id="email" placeholder="Email address" required 
+                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none">
+            <input type="email" id="confirmEmail" placeholder="Confirm email address" required 
+                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none">
+            <input type="password" id="password" placeholder="Password (min 8 chars)" required 
+                   class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none">
+            <div id="error" class="text-red-400 text-sm" style="display:none;"></div>
+            <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">
+                Start Beta Access - $19/month
+            </button>
+        </form>
+        <p class="text-center mt-4 text-gray-400">
+            Already have an account? <a href="/login" class="text-purple-400 hover:text-purple-300">Login here</a>
+        </p>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const confirmEmail = document.getElementById('confirmEmail').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            
+            // Validate emails match
+            if (email !== confirmEmail) {
+                errorDiv.textContent = 'Email addresses do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorDiv.textContent = 'Please enter a valid email address';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, password})
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // Redirect to Stripe checkout
+                    const checkoutResponse = await fetch('/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({email})
+                    });
+                    const checkoutData = await checkoutResponse.json();
+                    if (checkoutData.checkout_url) {
+                        window.location.href = checkoutData.checkout_url;
+                    }
+                } else {
+                    errorDiv.textContent = data.error || 'Registration failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Connection failed';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+    </body></html>
+    '''
 
 @app.route('/login')
 def login_page():
@@ -1223,7 +1303,7 @@ def home():
                             <span class="font-bold text-yellow-400">FREE upgrade to PRO!</span>
                         </li>
                     </ul>
-                    <a href="/api/auth/register" class="cta-button block w-full py-3 text-center rounded-lg font-semibold text-white">
+                    <a href="/register" class="cta-button block w-full py-3 text-center rounded-lg font-semibold text-white">
                         Start Beta Access
                     </a>
                 </div>
@@ -1293,7 +1373,7 @@ def home():
             <p class="text-xl text-gray-300 mb-8">
                 Join the Beta today and start discovering whale wallets before the competition.
             </p>
-            <a href="/api/auth/register" class="cta-button inline-block px-10 py-4 rounded-lg font-semibold text-white text-lg mr-4">
+            <a href="/register" class="cta-button inline-block px-10 py-4 rounded-lg font-semibold text-white text-lg mr-4">
                 Start Beta Access - $19/month
             </a>
             <a href="/login" class="inline-block px-8 py-4 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
