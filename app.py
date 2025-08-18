@@ -1,3 +1,10 @@
+from flask import Flask, jsonify, request
+import os
+from datetime import datetime
+
+# Create Flask app
+app = Flask(__name__)
+
 @app.route('/')
 def home():
     return '''<!DOCTYPE html>
@@ -320,3 +327,7 @@ def home():
     </script>
 </body>
 </html>'''
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8000))
+    app.run(debug=True, host='0.0.0.0', port=port)
