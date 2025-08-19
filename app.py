@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template_string
 import os
+import dotenv
 from datetime import datetime
 
 # Create Flask app
@@ -590,4 +591,29 @@ def checkout():
             <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
                 <h3 class="font-bold text-green-400 mb-2">What happens next:</h3>
                 <ul class="text-sm text-gray-300 space-y-1">
-                    <li>• Payment processing through
+                    <li>• Payment processing setup in progress</li>
+                    <li>• You'll receive access credentials within 24 hours</li>
+                    <li>• Direct email updates from Sean about our situation</li>
+                    <li>• Full whale tracking dashboard access</li>
+                </ul>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-400 mb-4">Payment integration coming soon. For immediate access:</p>
+                <a href="mailto:sean@whale-tracker.pro?subject=Subscription: {selected_plan["name"]}" 
+                   class="inline-block px-8 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">
+                    📧 Email for Immediate Setup
+                </a>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a href="/" class="text-purple-400 hover:text-purple-300">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>'''
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8000))
+    app.run(debug=True, host='0.0.0.0', port=port)
