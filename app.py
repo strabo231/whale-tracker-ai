@@ -21,7 +21,7 @@ DOMAIN = os.getenv('DOMAIN', 'https://whale-tracker-ai.up.railway.app')
 
 # Price IDs - YOUR ACTUAL STRIPE PRICE IDS
 PRICE_IDS = {
-    'professional': 'price_1RyJNXDfwP4gynpjGy1Pn3bH',  # Professional $49/month
+    'professional': 'price_1RyKygRkVYDUbhIFgs8JUTTR',  # Professional $49/month
     'emergency': 'price_1RyJOzDfwP4gynpjh4mO6b6B',     # Help Save Home $199/month  
     'enterprise': 'price_1RyJR4DfwP4gynpj3sURTxuU',    # Enterprise $899/month
     'lifetime': 'price_1RyJS8DfwP4gynpjb23JQGGn',      # Lifetime $2,999 one-time
