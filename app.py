@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, render_template_string
 import os
-import dotenv
 from datetime import datetime
 
 # Create Flask app
