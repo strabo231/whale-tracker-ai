@@ -4,6 +4,8 @@ import logging
 import asyncio
 import sys  # ← ADD THIS
 import os
+import hashlib
+import time
 
 # Add the current directory to Python path so we can import your AI
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -249,6 +251,84 @@ def determine_risk_level_from_confidence(confidence):
     else:
         return 'high'
 
+# Add these to your ai_server.py file:
+
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    """Simple registration - gives everyone beta access!"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').lower()
+        password = data.get('password', '')
+        
+        if not email or len(password) < 8:
+            return jsonify({'error': 'Invalid email or password'}), 400
+        
+        logger.info(f"👤 New user registered: {email}")
+        
+        return jsonify({
+            'success': True,
+            'token': f'demo-token-{int(time.time())}',
+            'api_key': f'wt_{hashlib.md5(email.encode()).hexdigest()[:16]}',
+            'user': {
+                'email': email,
+                'subscription_tier': 'beta'  # Everyone gets beta access!
+            }
+        })
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    """Simple login"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').lower()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({'error': 'Email and password required'}), 400
+        
+        logger.info(f"🔐 User logged in: {email}")
+        
+        return jsonify({
+            'success': True,
+            'token': f'demo-token-{int(time.time())}',
+            'api_key': f'wt_{hashlib.md5(email.encode()).hexdigest()[:16]}',
+            'user': {
+                'email': email,
+                'subscription_tier': 'beta'
+            }
+        })
+        
+
+@app.route('/api/user/profile', methods=['GET'])
+def get_user_profile():
+    """Get user profile"""
+    return jsonify({
+        'success': True,
+        'user': {
+            'email': 'beta@user.com',
+            'subscription_tier': 'beta',
+            'features': ['whale_discovery', 'basic_dashboard', 'ai_analysis']
+        }
+    })
+
+@app.route('/api/whales/top', methods=['GET'])
+def get_top_whales():  # Better function name
+    # Complete whale data with 8 whales
+    whales = [
+        # ... full list of 8 whales from my artifact
+    ]
+    return jsonify({
+        'success': True,
+        'whales': whales,
+        'total_count': len(whales),
+        'user_limit': 50,
+        'data_source': 'Whale_Intelligence_Platform'
+    })
+        # ... more whales
+    ]
+    return jsonify({'success': True, 'whales': whales})
+
 @app.route('/api/ai/whale-activity', methods=['GET'])
 def get_whale_activity():
     """Get whale activity data (placeholder for now)"""
@@ -314,6 +394,24 @@ def root():
             "/api/ai/health"
         ]
     })
+    @app.route('/api/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    """Create checkout session (placeholder for now)"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '')
+        
+        logger.info(f"💳 Checkout session requested for: {email}")
+        
+        # For now, return a success URL (you can add Stripe later)
+        return jsonify({
+            'success': True,
+            'checkout_url': f'https://whale-tracker-ai.up.railway.app/success?email={email}'
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Checkout error: {e}")
+        return jsonify({'error': 'Failed to create checkout session'}), 500
 
 if __name__ == '__main__':
     logger.info("🤖 Starting Real AI Server...")
