@@ -85,6 +85,7 @@ def home():
                 </div>
             </div>
             <div class="flex items-center space-x-4">
+                <a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a>
                 <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
                 <a href="/dashboard" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
                     Access Dashboard
@@ -869,10 +870,558 @@ def roadmap():
 </html>
     ''')
 
-# Also add this to your home page navigation - update the header section in your home() function
-# Add this link to the header:
-# <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
+@app.route('/contact')
+def contact():
+    """Contact page"""
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black/20 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-purple-500 to-cyan-500 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                        Whale Tracker Pro
+                    </h1>
+                    <p class="text-gray-400 text-sm">Contact Information</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
+                <a href="/dashboard" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
 
+    <!-- Contact Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-6">Get in Touch</h1>
+                <p class="text-xl text-gray-300">We're here to help and always available to our community</p>
+            </div>
+
+            <!-- Emergency Banner -->
+            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-12 text-center">
+                <h3 class="text-2xl font-bold text-red-400 mb-2">🏠 Urgent Family Situation</h3>
+                <p class="text-gray-300 mb-4">
+                    Our house is scheduled for auction on <strong class="text-red-400">September 2nd, 2025</strong>. 
+                    For immediate assistance regarding our family emergency, please use the priority contact below.
+                </p>
+                <div class="flex items-center justify-center space-x-2 text-orange-400 font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <a href="mailto:sean@whale-tracker.pro" class="hover:text-orange-300">sean@whale-tracker.pro</a>
+                </div>
+            </div>
+
+            <!-- Contact Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                
+                <!-- Business Contacts -->
+                <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 text-purple-400">💼 Business Inquiries</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-blue-500/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">General Inquiries</p>
+                                <a href="mailto:hello@whale-tracker.pro" class="text-blue-400 hover:text-blue-300">hello@whale-tracker.pro</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-green-500/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Technical Support</p>
+                                <a href="mailto:support@whale-tracker.pro" class="text-green-400 hover:text-green-300">support@whale-tracker.pro</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-purple-500/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Partnerships</p>
+                                <a href="mailto:partnerships@whale-tracker.pro" class="text-purple-400 hover:text-purple-300">partnerships@whale-tracker.pro</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community -->
+                <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 text-cyan-400">🌍 Community</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-blue-400/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Twitter</p>
+                                <a href="https://twitter.com/WhaleTrackerAI" target="_blank" class="text-blue-400 hover:text-blue-300">@WhaleTrackerAI</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-indigo-500/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Discord</p>
+                                <a href="https://discord.gg/WhaleTracker" target="_blank" class="text-indigo-400 hover:text-indigo-300">WhaleTracker Community</a>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-sky-500/20 p-2 rounded-lg">
+                                <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white">Telegram</p>
+                                <a href="https://t.me/WhaleTrackerPro" target="_blank" class="text-sky-400 hover:text-sky-300">@WhaleTrackerPro</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Response Time -->
+            <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8 text-center">
+                <h3 class="text-2xl font-bold mb-4">⚡ Response Times</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <div class="text-2xl font-bold text-green-400 mb-2">< 4 hours</div>
+                        <p class="text-gray-300">Emergency/Family Support</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-400 mb-2">< 24 hours</div>
+                        <p class="text-gray-300">Technical Support</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-400 mb-2">< 48 hours</div>
+                        <p class="text-gray-300">General Inquiries</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/refund" class="hover:text-white transition-colors">Refund Policy</a>
+            </div>
+            <p>&copy; 2025 Whale Tracker Pro. Community-funded innovation. 🐋</p>
+        </div>
+    </footer>
+</body>
+</html>
+    ''')
+
+@app.route('/terms')
+def terms():
+    """Terms of Service"""
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Terms of Service</h1>
+            <p class="text-gray-400">Last updated: August 21, 2025</p>
+        </div>
+
+        <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8 space-y-6">
+            
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">1. Service Description</h2>
+                <p class="text-gray-300">
+                    Whale Tracker Pro provides cryptocurrency whale tracking and analysis services. 
+                    Our platform discovers and monitors large cryptocurrency transactions and wallet activities 
+                    across multiple blockchain networks.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">2. Subscription Terms</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• Subscriptions are billed monthly unless otherwise specified</li>
+                    <li>• Lifetime subscriptions are one-time payments with perpetual access</li>
+                    <li>• Price locks guarantee your rate won't increase during active subscription</li>
+                    <li>• All payments are processed securely through Stripe</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">3. Beta Access & Development</h2>
+                <p class="text-gray-300">
+                    Whale Tracker Pro is currently in active development. Features and functionality 
+                    may change as we implement our roadmap milestones. Early subscribers receive 
+                    first access to new features and development updates.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">4. Investment Disclaimer</h2>
+                <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                    <p class="text-yellow-200 font-bold">⚠️ IMPORTANT: NOT FINANCIAL ADVICE</p>
+                    <p class="text-gray-300 mt-2">
+                        All information provided is for educational and research purposes only. 
+                        Cryptocurrency trading involves substantial risk of loss. Make your own 
+                        financial decisions and consult professionals when needed.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">5. Profit Sharing (Major Contributors)</h2>
+                <p class="text-gray-300">
+                    Contributors of $50,000+ annually are eligible for profit sharing based on 
+                    actual company revenues. This is not a securities offering or investment contract. 
+                    Profit sharing is contingent on company performance and applicable regulations.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">6. Data & Privacy</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• We collect minimal personal information (email, payment data)</li>
+                    <li>• Blockchain data used is publicly available</li>
+                    <li>• We never store private keys or sensitive wallet information</li>
+                    <li>• Data is encrypted and secured with industry standards</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">7. Limitation of Liability</h2>
+                <p class="text-gray-300">
+                    Whale Tracker Pro is provided "as is" without warranties. We are not liable 
+                    for trading losses, missed opportunities, or any damages arising from use of our service.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">8. Contact</h2>
+                <p class="text-gray-300">
+                    Questions about these terms? Contact us at 
+                    <a href="mailto:legal@whale-tracker.pro" class="text-blue-400 hover:text-blue-300">legal@whale-tracker.pro</a>
+                </p>
+            </section>
+
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+    ''')
+
+@app.route('/privacy')
+def privacy():
+    """Privacy Policy"""
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Privacy Policy</h1>
+            <p class="text-gray-400">Last updated: August 21, 2025</p>
+        </div>
+
+        <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8 space-y-6">
+            
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Information We Collect</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• <strong>Account Information:</strong> Email address for account creation</li>
+                    <li>• <strong>Payment Information:</strong> Processed securely by Stripe (we don't store card details)</li>
+                    <li>• <strong>Usage Data:</strong> How you interact with our platform</li>
+                    <li>• <strong>Technical Data:</strong> IP address, browser type, device information</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">How We Use Your Information</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• Provide and improve our whale tracking services</li>
+                    <li>• Process payments and manage subscriptions</li>
+                    <li>• Send important updates about your account</li>
+                    <li>• Communicate development progress and new features</li>
+                    <li>• Ensure platform security and prevent fraud</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Data Security</h2>
+                <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                    <p class="text-green-200 font-bold">🔒 Your Security is Our Priority</p>
+                    <ul class="text-gray-300 mt-2 space-y-1">
+                        <li>• All data encrypted in transit and at rest</li>
+                        <li>• We never store private keys or wallet passwords</li>
+                        <li>• Regular security audits and monitoring</li>
+                        <li>• Secure cloud infrastructure with redundancy</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Blockchain Data</h2>
+                <p class="text-gray-300">
+                    Our whale tracking service analyzes publicly available blockchain data. 
+                    This information is already public on blockchain networks. We do not 
+                    collect or store private wallet information.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Third-Party Services</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• <strong>Stripe:</strong> Payment processing (has their own privacy policy)</li>
+                    <li>• <strong>Railway:</strong> Hosting infrastructure</li>
+                    <li>• <strong>Blockchain APIs:</strong> For accessing public blockchain data</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Your Rights</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• Request access to your personal data</li>
+                    <li>• Request correction of inaccurate data</li>
+                    <li>• Request deletion of your account and data</li>
+                    <li>• Opt out of marketing communications</li>
+                    <li>• Data portability for your information</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Contact Us</h2>
+                <p class="text-gray-300">
+                    Privacy questions or requests? Contact us at 
+                    <a href="mailto:privacy@whale-tracker.pro" class="text-blue-400 hover:text-blue-300">privacy@whale-tracker.pro</a>
+                </p>
+            </section>
+
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+    ''')
+
+@app.route('/refund')
+def refund():
+    """Refund Policy"""
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Policy - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Refund Policy</h1>
+            <p class="text-gray-400">Last updated: August 21, 2025</p>
+        </div>
+
+        <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8 space-y-6">
+            
+            <!-- Emergency Context -->
+            <div class="bg-orange-500/10 border border-orange-500/30 rounded-lg p-6">
+                <h3 class="text-xl font-bold text-orange-400 mb-3">🏠 Special Circumstances</h3>
+                <p class="text-gray-300">
+                    We're currently in an emergency situation trying to save our family home from foreclosure 
+                    (auction scheduled September 2nd, 2025). Every subscription directly helps our family while 
+                    providing you with cutting-edge whale tracking technology.
+                </p>
+            </div>
+
+            <section>
+                <h2 class="text-2xl font-bold text-green-400 mb-4">Monthly Subscriptions</h2>
+                <ul class="text-gray-300 space-y-3">
+                    <li class="flex items-start space-x-2">
+                        <span class="text-green-400 mt-1">•</span>
+                        <span><strong>7-Day Money-Back Guarantee:</strong> Full refund if cancelled within 7 days of first subscription</span>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <span class="text-green-400 mt-1">•</span>
+                        <span><strong>Prorated Refunds:</strong> Available for service interruptions lasting more than 48 hours</span>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <span class="text-green-400 mt-1">•</span>
+                        <span><strong>Cancel Anytime:</strong> No refund for current billing period, but access continues until period ends</span>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-yellow-400 mb-4">Lifetime Subscriptions</h2>
+                <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                    <p class="text-yellow-200 font-bold mb-2">⚠️ Important: Limited Refund Policy</p>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>• <strong>72-Hour Window:</strong> Full refund available within 72 hours of purchase</li>
+                        <li>• <strong>After 72 Hours:</strong> No refunds available due to immediate access to services</li>
+                        <li>• <strong>Service Issues:</strong> Account credits or extensions for technical problems</li>
+                        <li>• <strong>Emergency Exception:</strong> Case-by-case review for extreme circumstances</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-blue-400 mb-4">Beta Access Refunds</h2>
+                <p class="text-gray-300">
+                    As we're currently in beta development, we understand some features may not meet expectations:
+                </p>
+                <ul class="text-gray-300 space-y-2 mt-3">
+                    <li>• Refunds available if core promised features are not delivered within 30 days</li>
+                    <li>• Bug-related issues will be resolved or account credited</li>
+                    <li>• Development delays may qualify for partial refunds or account extensions</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-purple-400 mb-4">How to Request a Refund</h2>
+                <ol class="text-gray-300 space-y-2">
+                    <li><strong>1.</strong> Contact us at <a href="mailto:refunds@whale-tracker.pro" class="text-blue-400 hover:text-blue-300">refunds@whale-tracker.pro</a></li>
+                    <li><strong>2.</strong> Include your email address and reason for refund request</li>
+                    <li><strong>3.</strong> We'll respond within 24 hours with next steps</li>
+                    <li><strong>4.</strong> Approved refunds are processed within 5-7 business days</li>
+                </ol>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-red-400 mb-4">Non-Refundable Situations</h2>
+                <ul class="text-gray-300 space-y-2">
+                    <li>• Violation of Terms of Service</li>
+                    <li>• Abuse of platform or community guidelines</li>
+                    <li>• Requests made after applicable refund windows</li>
+                    <li>• Normal market volatility affecting trading decisions</li>
+                    <li>• Personal financial circumstances unrelated to our service</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-4">Our Commitment</h2>
+                <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
+                    <p class="text-cyan-200">
+                        We're committed to building the best whale tracking platform while maintaining fair 
+                        refund policies. Our goal is your success and satisfaction with our service.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold text-gray-400 mb-4">Questions?</h2>
+                <p class="text-gray-300">
+                    Refund questions or concerns? Contact our support team:
+                </p>
+                <div class="mt-3">
+                    <p class="text-blue-400">📧 <a href="mailto:refunds@whale-tracker.pro" class="hover:text-blue-300">refunds@whale-tracker.pro</a></p>
+                    <p class="text-green-400">📧 <a href="mailto:support@whale-tracker.pro" class="hover:text-green-300">support@whale-tracker.pro</a></p>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+    ''') 
 
 if __name__ == '__main__':
     if not stripe.api_key:
