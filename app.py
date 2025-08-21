@@ -337,8 +337,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='subscription' if plan != 'lifetime' else 'payment',
-            success_url=DOMAIN + '/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=DOMAIN + '/?canceled=true',
+            success_url='https://whale-tracker-ai.up.railway.app/success?   session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://whale-tracker-ai.up.railway.app/?canceled=true',
             metadata={
                 'plan': plan,
                 'user_source': 'whale_tracker_domain'
