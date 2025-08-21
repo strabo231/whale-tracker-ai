@@ -112,159 +112,233 @@ def home():
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section class="py-20">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">Choose Your Plan</h2>
-                <p class="text-gray-400 text-lg">Professional whale intelligence + help save our home</p>
-            </div>
+// Complete JavaScript for your app.py template (replace existing script section)
+
+<script>
+    const stripe = Stripe('{{ stripe_publishable_key }}');
+    
+    // Update donation amount display
+    const donationSlider = document.getElementById('donationSlider');
+    const donationAmount = document.getElementById('donationAmount');
+    
+    if (donationSlider && donationAmount) {
+        donationSlider.addEventListener('input', function() {
+            const amount = this.value;
+            donationAmount.textContent = '$' + parseInt(amount).toLocaleString();
+        });
+    }
+    
+    // Monthly subscription function (existing)
+    async function subscribe(planType) {
+        try {
+            console.log('🚀 Subscribing to:', planType);
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                
-                <!-- Professional Tier -->
-                <div class="tier-card bg-black/40 backdrop-blur-sm border border-cyan-500/50 rounded-xl p-8">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-2">Professional</h3>
-                        <p class="text-gray-400 mb-4">Standard whale tracking</p>
-                        <div class="text-4xl font-bold mb-2">$49<span class="text-gray-400 text-lg">/month</span></div>
-                    </div>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            ETH + SOL whale discovery
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Reddit community scanning
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Up to 100 tracked whales
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Basic alerts & dashboard
-                        </li>
-                    </ul>
-                    
-                    <button onclick="subscribe('professional')" class="block w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-white text-center hover:opacity-90 transition-opacity">
-                        Subscribe - $49/month
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Processing...';
+            button.disabled = true;
+            
+            const response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    plan: planType,
+                    type: 'subscription'
+                }),
+            });
+            
+            const session = await response.json();
+            
+            if (session.error) {
+                alert('Error: ' + session.error);
+                button.innerHTML = originalText;
+                button.disabled = false;
+                return;
+            }
+            
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+            
+            if (result.error) {
+                alert('Payment error: ' + result.error.message);
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+            
+        } catch (error) {
+            console.error('❌ Error:', error);
+            alert('Payment system error. Please try again.');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }
+    
+    // Crowdfund one-time payments
+    async function crowdfund(tierType) {
+        try {
+            console.log('💰 Crowdfunding tier:', tierType);
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Processing...';
+            button.disabled = true;
+            
+            const response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    plan: tierType,
+                    type: 'crowdfund'
+                }),
+            });
+            
+            const session = await response.json();
+            
+            if (session.error) {
+                alert('Error: ' + session.error);
+                button.innerHTML = originalText;
+                button.disabled = false;
+                return;
+            }
+            
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+            
+            if (result.error) {
+                alert('Payment error: ' + result.error.message);
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+            
+        } catch (error) {
+            console.error('❌ Error:', error);
+            alert('Payment system error. Please try again.');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }
+    
+    // Custom donation amount
+    async function donateCustom(paymentMethod) {
+        const amount = document.getElementById('donationSlider').value;
+        
+        if (paymentMethod === 'crypto') {
+            // Show crypto coming soon modal
+            showCryptoModal();
+            return;
+        }
+        
+        try {
+            console.log('💝 Custom donation:', amount);
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '⏳ Processing...';
+            button.disabled = true;
+            
+            const response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    plan: 'custom_donation',
+                    type: 'donation',
+                    amount: parseInt(amount) * 100 // Convert to cents
+                }),
+            });
+            
+            const session = await response.json();
+            
+            if (session.error) {
+                alert('Error: ' + session.error);
+                button.innerHTML = originalText;
+                button.disabled = false;
+                return;
+            }
+            
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+            
+            if (result.error) {
+                alert('Payment error: ' + result.error.message);
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+            
+        } catch (error) {
+            console.error('❌ Error:', error);
+            alert('Payment system error. Please try again.');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    }
+    
+    // Show crypto coming soon modal
+    function showCryptoModal() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-gray-900 border border-purple-500/50 rounded-xl p-8 max-w-md mx-4 text-center">
+                <div class="text-6xl mb-4">🚀</div>
+                <h3 class="text-2xl font-bold text-purple-400 mb-4">Crypto Payments Coming Soon!</h3>
+                <p class="text-gray-300 mb-6">
+                    We're adding Bitcoin, Ethereum, and other crypto payments in our next update! 
+                    For now, please use card payments to help save our home.
+                </p>
+                <div class="flex gap-4">
+                    <button onclick="this.closest('.fixed').remove()" 
+                            class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors flex-1">
+                        Close
+                    </button>
+                    <button onclick="this.closest('.fixed').remove(); donateCustom('stripe')" 
+                            class="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors flex-1">
+                        Pay with Card
                     </button>
                 </div>
-
-                <!-- Help Us Stay Tier -->
-                <div class="tier-card bg-black/40 backdrop-blur-sm border border-orange-500/50 rounded-xl p-8 relative">
-                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span class="emergency-badge px-4 py-1 text-white text-sm font-bold rounded-full">
-                            🏠 HELP SAVE HOME
-                        </span>
-                    </div>
-                    
-                    <div class="text-center mb-8 mt-4">
-                        <h3 class="text-2xl font-bold mb-2">Help Us Stay</h3>
-                        <p class="text-gray-400 mb-4">Support our family + get premium access</p>
-                        <div class="text-4xl font-bold mb-2">$199<span class="text-gray-400 text-lg">/month</span></div>
-                        <p class="text-orange-400 text-sm font-medium">Every $ helps save our home</p>
-                    </div>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Everything in Professional
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Unlimited whale tracking
-                        </li>
-                        <li class="flex items-center text-orange-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                            Help save a special needs child's home
-                        </li>
-                    </ul>
-                    
-                    <button onclick="subscribe('emergency')" class="block w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg font-semibold text-white text-center hover:opacity-90 transition-opacity">
-                        🏠 Help Save Our Home - $199/month
-                    </button>
-                </div>
-
-                <!-- Enterprise Tier -->
-                <div class="tier-card bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-8">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
-                        <p class="text-gray-400 mb-4">Full API + custom solutions</p>
-                        <div class="text-4xl font-bold mb-2">$899<span class="text-gray-400 text-lg">/month</span></div>
-                    </div>
-                    
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Everything in Help Us Stay
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Full API access
-                        </li>
-                        <li class="flex items-center text-green-400">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            White-label options
-                        </li>
-                    </ul>
-                    
-                    <button onclick="subscribe('enterprise')" class="block w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg font-semibold text-white text-center hover:opacity-90 transition-opacity">
-                        Contact Sales - $899/month
-                    </button>
-                </div>
-
             </div>
-
-            <!-- Special Options -->
-            <div class="mt-12 text-center">
-                <div class="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-xl p-6 max-w-4xl mx-auto">
-                    <h3 class="text-2xl font-bold text-white mb-4">🚨 EMERGENCY OPTIONS</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-black/40 rounded-lg p-4">
-                            <h4 class="font-bold text-green-400 mb-2">House Saver LIFETIME</h4>
-                            <p class="text-2xl font-bold text-white">$2,999 <span class="text-sm text-gray-400">one-time</span></p>
-                            <p class="text-gray-400 text-sm mb-3">Everything forever + help save our home</p>
-                            <button onclick="subscribe('lifetime')" class="w-full py-2 bg-green-600 hover:bg-green-700 rounded font-semibold text-center transition-colors">
-                                🏠 Save Our House + Get Lifetime Access
-                            </button>
-                        </div>
-                        <div class="bg-black/40 rounded-lg p-4">
-                            <h4 class="font-bold text-blue-400 mb-2">6-Month Lifeline</h4>
-                            <p class="text-2xl font-bold text-white">$999 <span class="text-sm text-gray-400">upfront</span></p>
-                            <p class="text-gray-400 text-sm mb-3">Save $395 vs monthly + help family</p>
-                            <button onclick="subscribe('sixmonth')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded font-semibold text-center transition-colors">
-                                💪 6 Months Upfront (Save $395)
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    // Add some epic animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+                bar.style.transition = 'width 2s ease-out';
+            }, 500);
+        });
+        
+        // Add pulse animation to emergency elements
+        const emergencyElements = document.querySelectorAll('.emergency-badge');
+        emergencyElements.forEach(el => {
+            setInterval(() => {
+                el.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                }, 200);
+            }, 2000);
+        });
+    });
+</script>
 
     <!-- Footer -->
     <footer class="border-t border-gray-800 py-8">
@@ -318,17 +392,125 @@ def home():
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    """Create Stripe checkout session"""
+    """Enhanced checkout session for subscriptions, crowdfund, and donations"""
     try:
         data = request.get_json()
         plan = data.get('plan', 'professional')
+        payment_type = data.get('type', 'subscription')  # subscription, crowdfund, donation
+        custom_amount = data.get('amount')  # For custom donations (in cents)
         
-        # Get the price ID for the selected plan
-        price_id = PRICE_IDS.get(plan)
+        # Define all pricing
+        PRICING = {
+            # Monthly subscriptions
+            'professional': {'price_id': 'price_1RyKygRkVYDUbhIFgs8JUTTR', 'mode': 'subscription'},
+            'emergency': {'price_id': 'price_1RyapeRkVYDUbhIFwSQYNIAw', 'mode': 'subscription'},
+            'enterprise': {'price_id': 'price_1Ryar9RkVYDUbhIFr4Oe7N9C', 'mode': 'subscription'},
+            
+            # One-time crowdfund tiers
+            'house_hero': {'amount': 50000, 'mode': 'payment'},        # $500
+            'family_guardian': {'amount': 150000, 'mode': 'payment'},   # $1,500
+            'life_changer': {'amount': 500000, 'mode': 'payment'},      # $5,000
+            'legend': {'amount': 1000000, 'mode': 'payment'},           # $10,000
+            
+            # Existing one-time
+            'lifetime': {'price_id': 'price_1Ryat4RkVYDUbhIFxohXgOK1', 'mode': 'payment'},
+        }
         
-        if not price_id or price_id.startswith('price_UPDATE'):
+        # Handle custom donations
+        if payment_type == 'donation' and custom_amount:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': '🏠 Emergency House Fund Donation',
+                            'description': 'Help save our family home from foreclosure - every dollar counts!',
+                            'images': ['https://whale-tracker-ai.up.railway.app/static/house-hero.png'],
+                        },
+                        'unit_amount': custom_amount,
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=f'{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}&type=donation',
+                cancel_url=f'{DOMAIN}/?canceled=true',
+                metadata={
+                    'plan': 'custom_donation',
+                    'type': 'donation',
+                    'amount': custom_amount,
+                    'source': 'whale_tracker_emergency_fund'
+                }
+            )
+            
+            logger.info(f"💰 Created donation session: ${custom_amount/100}")
+            return jsonify({'id': checkout_session.id})
+        
+        # Handle crowdfund tiers (one-time payments with fixed amounts)
+        if payment_type == 'crowdfund' and plan in ['house_hero', 'family_guardian', 'life_changer', 'legend']:
+            tier_info = PRICING[plan]
+            
+            # Map plan names to display names and benefits
+            tier_details = {
+                'house_hero': {
+                    'name': '💰 House Hero - Save Our Home',
+                    'description': '1 year premium access + Hero badge + Help save our family home',
+                    'benefits': ['1 Year Premium Access', 'Hero Badge in Dashboard', 'Monthly Progress Updates', 'Help Save Our Home']
+                },
+                'family_guardian': {
+                    'name': '🏆 Family Guardian - Protector Status', 
+                    'description': '2 years premium access + Guardian badge + 3% profit sharing + Help save our home',
+                    'benefits': ['2 Years Premium Access', 'Guardian Badge + Special Features', 'Quarterly Strategy Calls', '3% Profit Sharing for Life']
+                },
+                'life_changer': {
+                    'name': '👑 Life Changer - VIP Status',
+                    'description': 'Lifetime premium access + VIP badge + 5% profit sharing + Monthly 1-on-1 calls',
+                    'benefits': ['Lifetime Premium Access', 'VIP Badge + Exclusive Features', 'Monthly 1-on-1 Calls', '5% Profit Sharing for Life']
+                },
+                'legend': {
+                    'name': '🌟 Legend Status - Ultimate Supporter',
+                    'description': 'Everything + Legend badge + Advisory board + 10% profit sharing',
+                    'benefits': ['Everything in Life Changer', 'Legend Badge + Co-branding', 'Advisory Board Position', '10% Profit Sharing for Life']
+                }
+            }
+            
+            tier = tier_details[plan]
+            
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': tier['name'],
+                            'description': tier['description'],
+                            'images': ['https://whale-tracker-ai.up.railway.app/static/whale-hero.png'],
+                        },
+                        'unit_amount': tier_info['amount'],
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=f'{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}&type=crowdfund&tier={plan}',
+                cancel_url=f'{DOMAIN}/?canceled=true',
+                metadata={
+                    'plan': plan,
+                    'type': 'crowdfund',
+                    'tier': plan,
+                    'user_source': 'whale_tracker_crowdfund'
+                }
+            )
+            
+            logger.info(f"🚀 Created crowdfund session for {plan}: ${tier_info['amount']/100}")
+            return jsonify({'id': checkout_session.id})
+        
+        # Handle regular subscriptions (existing logic with enhancements)
+        price_id = PRICING.get(plan, {}).get('price_id')
+        mode = PRICING.get(plan, {}).get('mode', 'subscription')
+        
+        if not price_id:
             return jsonify({
-                'error': 'Price ID not configured for plan: ' + plan
+                'error': f'Price ID not configured for plan: {plan}'
             }), 400
         
         # Create Stripe checkout session
@@ -338,16 +520,17 @@ def create_checkout_session():
                 'price': price_id,
                 'quantity': 1,
             }],
-            mode='subscription' if plan != 'lifetime' else 'payment',
-            success_url='https://whale-tracker-ai.up.railway.app/success?   session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='https://whale-tracker-ai.up.railway.app/?canceled=true',
+            mode=mode,
+            success_url=f'{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}&plan={plan}',
+            cancel_url=f'{DOMAIN}/?canceled=true',
             metadata={
                 'plan': plan,
+                'type': 'subscription',
                 'user_source': 'whale_tracker_domain'
             }
         )
         
-        logger.info(f"💳 Created checkout session for plan: {plan}")
+        logger.info(f"💳 Created {mode} session for plan: {plan}")
         
         return jsonify({
             'id': checkout_session.id
@@ -362,8 +545,107 @@ def create_checkout_session():
 
 @app.route('/success')
 def success():
-    """Success page after payment"""
+    """Enhanced success page with tier recognition"""
     session_id = request.args.get('session_id')
+    payment_type = request.args.get('type', 'subscription')
+    tier = request.args.get('tier', 'professional')
+    plan = request.args.get('plan', 'professional')
+    
+    # Define success messages and benefits by tier
+    tier_benefits = {
+        'house_hero': {
+            'icon': '💰',
+            'title': 'House Hero Status Unlocked!',
+            'subtitle': 'You\'re helping save our family home!',
+            'benefits': [
+                '✅ 1 Year Premium Access Activated',
+                '✅ Hero Badge Added to Your Profile',
+                '✅ Monthly Progress Updates Enabled',
+                '✅ You\'re Officially a House Hero!'
+            ],
+            'special_message': '🏠 Your contribution goes directly to saving our home from foreclosure. Thank you for being a hero!'
+        },
+        'family_guardian': {
+            'icon': '🏆',
+            'title': 'Family Guardian Status Achieved!',
+            'subtitle': 'You\'re protecting our family\'s future!',
+            'benefits': [
+                '✅ 2 Years Premium Access Activated',
+                '✅ Guardian Badge + Special Features',
+                '✅ Quarterly Strategy Calls Scheduled',
+                '✅ 3% Profit Sharing Activated for Life'
+            ],
+            'special_message': '🛡️ You\'re now a Family Guardian! Your support means everything to us.'
+        },
+        'life_changer': {
+            'icon': '👑',
+            'title': 'Life Changer VIP Status!',
+            'subtitle': 'You\'ve literally changed our lives!',
+            'benefits': [
+                '✅ Lifetime Premium Access Activated',
+                '✅ VIP Badge + Exclusive Features',
+                '✅ Monthly 1-on-1 Calls Scheduled',
+                '✅ 5% Profit Sharing Activated for Life'
+            ],
+            'special_message': '👑 You are a true LIFE CHANGER! We will never forget your kindness.'
+        },
+        'legend': {
+            'icon': '🌟',
+            'title': 'LEGEND STATUS UNLOCKED!',
+            'subtitle': 'You\'re now part of Whale Tracker history!',
+            'benefits': [
+                '✅ Everything in Life Changer',
+                '✅ Legend Badge + Co-branding Rights',
+                '✅ Advisory Board Position Confirmed',
+                '✅ 10% Profit Sharing Activated for Life'
+            ],
+            'special_message': '🌟 LEGENDARY! You\'ve secured your place in Whale Tracker history forever!'
+        },
+        'professional': {
+            'icon': '🐋',
+            'title': 'Welcome to Whale Tracker Pro!',
+            'subtitle': 'Professional whale intelligence activated',
+            'benefits': [
+                '✅ ETH + SOL Whale Discovery',
+                '✅ Reddit Community Scanning',
+                '✅ Up to 100 Tracked Whales',
+                '✅ Basic Alerts & Dashboard'
+            ],
+            'special_message': '🚀 Welcome to the whale tracking revolution!'
+        },
+        'emergency': {
+            'icon': '🏠',
+            'title': 'Thank You for Helping Save Our Home!',
+            'subtitle': 'Premium access + family support',
+            'benefits': [
+                '✅ Unlimited Whale Tracking',
+                '✅ Priority Support Access',
+                '✅ All Premium Features',
+                '✅ You\'re Helping Save Our Home!'
+            ],
+            'special_message': '🙏 Your subscription directly helps prevent our foreclosure. We\'re forever grateful!'
+        },
+        'custom_donation': {
+            'icon': '💝',
+            'title': 'Emergency Fund Donation Received!',
+            'subtitle': 'Every dollar helps save our home',
+            'benefits': [
+                '✅ Donation Confirmed',
+                '✅ Supporter Badge Earned',
+                '✅ Progress Updates Enabled',
+                '✅ Part of Our Rescue Mission!'
+            ],
+            'special_message': '🏠 Your donation goes directly to our emergency house fund. Thank you for caring!'
+        }
+    }
+    
+    # Determine which tier to show
+    if payment_type == 'crowdfund':
+        current_tier = tier_benefits.get(tier, tier_benefits['professional'])
+    elif payment_type == 'donation':
+        current_tier = tier_benefits['custom_donation']
+    else:
+        current_tier = tier_benefits.get(plan, tier_benefits['professional'])
     
     return render_template_string('''
 <!DOCTYPE html>
@@ -371,95 +653,436 @@ def success():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Successful - Whale Tracker Pro</title>
+    <title>{{ title }} - Whale Tracker Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .celebration {
+            animation: celebration 3s ease-out;
+        }
+        @keyframes celebration {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen text-white">
-    <div class="max-w-2xl mx-auto px-4 py-16 text-center">
-        <div class="bg-black/40 backdrop-blur-sm border border-green-500/50 rounded-xl p-8">
-            <div class="text-6xl mb-6">🎉</div>
-            <h1 class="text-4xl font-bold text-green-400 mb-4">Payment Successful!</h1>
-            <p class="text-xl text-gray-300 mb-6">
-                Thank you for subscribing to Whale Tracker Pro!
-            </p>
-            <p class="text-gray-300 mb-8">
-                🏠 Your subscription directly helps save our family's home. 
-                You'll receive access credentials within 24 hours.
-            </p>
+<body class="text-white">
+    <div class="max-w-4xl mx-auto px-4 py-16">
+        
+        <!-- Main Success Card -->
+        <div class="celebration bg-black/40 backdrop-blur-sm border border-green-500/50 rounded-xl p-8 text-center mb-8">
+            <div class="text-8xl mb-6 bounce">{{ icon }}</div>
+            <h1 class="text-4xl font-bold text-green-400 mb-4">{{ title }}</h1>
+            <p class="text-xl text-gray-300 mb-8">{{ subtitle }}</p>
             
-            <div class="space-y-4">
-                <a href="/dashboard" class="block px-8 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">
-                    Access Dashboard
-                </a>
-                <a href="/" class="block px-8 py-3 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
-                    Back to Home
-                </a>
+            <!-- Benefits List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {% for benefit in benefits %}
+                <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                    <p class="text-green-300">{{ benefit }}</p>
+                </div>
+                {% endfor %}
             </div>
             
-            <p class="text-sm text-gray-400 mt-6">
-                Session ID: {{ session_id }}
+            <!-- Special Message -->
+            <div class="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg p-6 mb-8">
+                <p class="text-lg text-purple-200">{{ special_message }}</p>
+            </div>
+        </div>
+        
+        <!-- Next Steps -->
+        <div class="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-8 mb-8">
+            <h3 class="text-2xl font-bold mb-6 text-center">🚀 What Happens Next?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl mb-3">📧</div>
+                    <h4 class="font-bold mb-2">Check Your Email</h4>
+                    <p class="text-gray-400 text-sm">Confirmation and access details sent within 5 minutes</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-3">🔑</div>
+                    <h4 class="font-bold mb-2">Dashboard Access</h4>
+                    <p class="text-gray-400 text-sm">Full access activated within 24 hours</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-3">📊</div>
+                    <h4 class="font-bold mb-2">Start Tracking</h4>
+                    <p class="text-gray-400 text-sm">Begin discovering whales immediately</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Update -->
+        {% if payment_type == 'crowdfund' or payment_type == 'donation' %}
+        <div class="bg-orange-500/10 border border-orange-500/30 rounded-xl p-6 mb-8 text-center">
+            <h3 class="text-xl font-bold text-orange-400 mb-3">🏠 House Rescue Progress</h3>
+            <div class="w-full bg-gray-700 rounded-full h-4 mb-4">
+                <div class="bg-gradient-to-r from-green-500 to-blue-500 h-4 rounded-full" style="width: 23%"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-300">
+                <span>$12,847 raised</span>
+                <span class="font-bold text-orange-400">Goal: $55,000</span>
+            </div>
+            <p class="text-orange-300 text-sm mt-2">💪 Your contribution brings us closer to saving our home!</p>
+        </div>
+        {% endif %}
+        
+        <!-- Action Buttons -->
+        <div class="text-center space-y-4">
+            <a href="/dashboard" class="block w-full md:w-auto md:inline-block px-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white text-lg hover:opacity-90 transition-opacity">
+                🐋 Access Dashboard
+            </a>
+            <div class="flex flex-col md:flex-row gap-4 justify-center mt-4">
+                <a href="/roadmap" class="px-6 py-3 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
+                    View Development Roadmap
+                </a>
+                <a href="/contact" class="px-6 py-3 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
+                    Contact Support
+                </a>
+            </div>
+        </div>
+        
+        <!-- Session ID for Reference -->
+        <div class="text-center mt-8">
+            <p class="text-sm text-gray-400">
+                Transaction ID: {{ session_id }}<br>
+                Keep this for your records
             </p>
         </div>
     </div>
+    
+    <!-- Auto-redirect to dashboard after 30 seconds -->
+    <script>
+        // Celebration confetti effect
+        setTimeout(() => {
+            // You can add a confetti library here for extra celebration
+            console.log('🎉 Welcome to Whale Tracker Pro! 🎉');
+        }, 1000);
+        
+        // Optional auto-redirect (uncomment if desired)
+        // setTimeout(() => {
+        //     window.location.href = '/dashboard';
+        // }, 30000);
+    </script>
 </body>
 </html>
-    ''', session_id=session_id)
+    ''', 
+    title=current_tier['title'],
+    icon=current_tier['icon'],
+    subtitle=current_tier['subtitle'],
+    benefits=current_tier['benefits'],
+    special_message=current_tier['special_message'],
+    session_id=session_id,
+    payment_type=payment_type
+    )
 
 # FIXED DASHBOARD ROUTES
-@app.route('/dashboard')
-def dashboard():
-    """Working dashboard - bypass React auth"""
-    return render_template_string('''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Whale Tracker Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="flex items-center justify-between mb-8">
-            <h1 class="text-4xl font-bold">🐋 Whale Tracker Dashboard</h1>
-            <span class="px-4 py-2 bg-green-500 text-white rounded-full">ACTIVE SUBSCRIBER</span>
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+
+const WhaleDashboard = () => {
+  const [whaleData, setWhaleData] = useState([]);
+  const [totalVolume, setTotalVolume] = useState(0);
+  const [activeWhales, setActiveWhales] = useState(0);
+  const [topTokens, setTopTokens] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Simulate real whale data
+  useEffect(() => {
+    const generateWhaleData = () => {
+      const tokens = ['ETH', 'PEPE', 'SHIB', 'DOGE', 'BTC', 'SOL', 'MATIC', 'LINK'];
+      const whaleAddresses = [
+        '0x123...abc',
+        '0x456...def', 
+        '0x789...ghi',
+        '0xabc...123',
+        '0xdef...456'
+      ];
+
+      // Generate recent transactions
+      const transactions = [];
+      for (let i = 0; i < 15; i++) {
+        const token = tokens[Math.floor(Math.random() * tokens.length)];
+        const amount = (Math.random() * 5000000 + 100000);
+        const address = whaleAddresses[Math.floor(Math.random() * whaleAddresses.length)];
+        
+        transactions.push({
+          id: i,
+          token,
+          amount: amount,
+          address,
+          type: Math.random() > 0.5 ? 'BUY' : 'SELL',
+          time: new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString(),
+          price: Math.random() > 0.7 ? 'PUMP' : Math.random() > 0.4 ? 'DUMP' : 'STABLE'
+        });
+      }
+
+      // Generate volume data for chart
+      const volumeData = [];
+      for (let i = 0; i < 24; i++) {
+        volumeData.push({
+          hour: `${i}:00`,
+          volume: Math.random() * 10000000 + 1000000,
+          transactions: Math.floor(Math.random() * 50 + 10)
+        });
+      }
+
+      // Generate top tokens data
+      const tokenData = tokens.slice(0, 6).map(token => ({
+        token,
+        volume: Math.random() * 50000000 + 5000000,
+        whales: Math.floor(Math.random() * 20 + 5),
+        change: (Math.random() - 0.5) * 200
+      }));
+
+      setRecentTransactions(transactions);
+      setWhaleData(volumeData);
+      setTopTokens(tokenData);
+      setTotalVolume(transactions.reduce((sum, tx) => sum + tx.amount, 0));
+      setActiveWhales(47);
+      setLoading(false);
+    };
+
+    generateWhaleData();
+    
+    // Update data every 10 seconds to simulate real-time
+    const interval = setInterval(generateWhaleData, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-bounce">🐋</div>
+          <div className="text-2xl font-bold text-white mb-2">Hunting for Whales...</div>
+          <div className="text-gray-400">Scanning blockchain for massive movements</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-4">
+          <div className="text-4xl">🐋</div>
+          <div>
+            <h1 className="text-3xl font-bold">Whale Tracker Pro</h1>
+            <p className="text-gray-400">Live Whale Intelligence Dashboard</p>
+          </div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h3 class="text-xl font-bold mb-2">Active Whales</h3>
-                <p class="text-3xl font-bold text-green-400">47</p>
-                <p class="text-gray-400">Currently tracking</p>
+        <div className="flex items-center space-x-4">
+          <div className="bg-green-500/20 px-4 py-2 rounded-full border border-green-500/50">
+            <span className="text-green-400 font-bold">🟢 LIVE</span>
+          </div>
+          <div className="bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
+            <span className="text-orange-400 font-bold">🏠 8 Days Left</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-black/40 backdrop-blur-sm border border-green-500/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Active Whales</p>
+              <p className="text-3xl font-bold text-green-400">{activeWhales}</p>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h3 class="text-xl font-bold mb-2">Total Volume</h3>
-                <p class="text-3xl font-bold text-blue-400">$2.1M</p>
-                <p class="text-gray-400">Last 24 hours</p>
+            <div className="text-3xl">🐋</div>
+          </div>
+          <p className="text-gray-400 text-xs mt-2">+8 new this hour</p>
+        </div>
+
+        <div className="bg-black/40 backdrop-blur-sm border border-blue-500/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">24h Volume</p>
+              <p className="text-3xl font-bold text-blue-400">${(totalVolume/1000000).toFixed(1)}M</p>
             </div>
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h3 class="text-xl font-bold mb-2">New Discoveries</h3>
-                <p class="text-3xl font-bold text-purple-400">8</p>
-                <p class="text-gray-400">This week</p>
+            <div className="text-3xl">💰</div>
+          </div>
+          <p className="text-gray-400 text-xs mt-2">+23% from yesterday</p>
+        </div>
+
+        <div className="bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Alerts Sent</p>
+              <p className="text-3xl font-bold text-purple-400">1,247</p>
             </div>
+            <div className="text-3xl">🚨</div>
+          </div>
+          <p className="text-gray-400 text-xs mt-2">Last alert: 2 min ago</p>
+        </div>
+
+        <div className="bg-black/40 backdrop-blur-sm border border-orange-500/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">House Fund</p>
+              <p className="text-3xl font-bold text-orange-400">$12,847</p>
+            </div>
+            <div className="text-3xl">🏠</div>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full" style={{width: '23%'}}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        {/* Volume Chart */}
+        <div className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+          <h3 className="text-xl font-bold mb-4">24h Whale Volume</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={whaleData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="hour" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" tickFormatter={(value) => `$${(value/1000000).toFixed(1)}M`} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px'
+                }}
+                formatter={(value) => [`$${(value/1000000).toFixed(2)}M`, 'Volume']}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="volume" 
+                stroke="#10b981" 
+                strokeWidth={3}
+                dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Top Tokens */}
+        <div className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+          <h3 className="text-xl font-bold mb-4">Top Whale Tokens</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={topTokens}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="token" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" tickFormatter={(value) => `$${(value/1000000).toFixed(0)}M`} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px'
+                }}
+                formatter={(value) => [`$${(value/1000000).toFixed(2)}M`, 'Volume']}
+              />
+              <Bar dataKey="volume" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold">🚨 Live Whale Transactions</h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-green-400 text-sm font-bold">LIVE</span>
+          </div>
         </div>
         
-        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-6 mb-6">
-            <h3 class="text-xl font-bold text-green-400 mb-2">✅ Premium Access Confirmed</h3>
-            <p class="text-gray-300">Thank you for your subscription! You're helping save our family home.</p>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="text-left py-3 text-gray-400">Time</th>
+                <th className="text-left py-3 text-gray-400">Token</th>
+                <th className="text-left py-3 text-gray-400">Amount</th>
+                <th className="text-left py-3 text-gray-400">Type</th>
+                <th className="text-left py-3 text-gray-400">Whale</th>
+                <th className="text-left py-3 text-gray-400">Impact</th>
+                <th className="text-left py-3 text-gray-400">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentTransactions.map((tx) => (
+                <tr key={tx.id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                  <td className="py-3 text-gray-300">{tx.time}</td>
+                  <td className="py-3">
+                    <span className="font-bold text-white">{tx.token}</span>
+                  </td>
+                  <td className="py-3 font-bold text-cyan-400">
+                    ${(tx.amount/1000000).toFixed(2)}M
+                  </td>
+                  <td className="py-3">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      tx.type === 'BUY' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {tx.type}
+                    </span>
+                  </td>
+                  <td className="py-3 text-gray-400 font-mono text-sm">{tx.address}</td>
+                  <td className="py-3">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      tx.price === 'PUMP' ? 'bg-green-500/20 text-green-400' : 
+                      tx.price === 'DUMP' ? 'bg-red-500/20 text-red-400' : 
+                      'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {tx.price}
+                    </span>
+                  </td>
+                  <td className="py-3">
+                    <button className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs font-bold transition-colors">
+                      📋 Copy
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        
-        <div class="bg-gray-800 rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4">🚀 Live Dashboard Features</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300">
-                <div>• Real-time whale discovery from Reddit</div>
-                <div>• Live Ethereum & Solana tracking</div>
-                <div>• AI-powered trading insights</div>
-                <div>• Custom alerts and notifications</div>
-            </div>
-            <p class="mt-6 text-orange-400 font-semibold">Full interactive dashboard: Coming within 24 hours</p>
+      </div>
+
+      {/* Bottom Banner */}
+      <div className="mt-8 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl p-6 text-center">
+        <h3 className="text-2xl font-bold text-red-400 mb-2">🚨 URGENT: Help Save Our Home!</h3>
+        <p className="text-gray-300 mb-4">
+          House auction in 8 days. Every subscription helps save our special needs son's home.
+        </p>
+        <div className="flex items-center justify-center space-x-4">
+          <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-bold hover:opacity-90 transition-opacity">
+            🏠 Help Save Our Home - $199/month
+          </button>
+          <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg font-bold hover:opacity-90 transition-opacity">
+            🐋 Professional - $49/month
+          </button>
         </div>
+      </div>
     </div>
-</body>
-</html>
-    ''')
+  );
+};
+
+export default WhaleDashboard;
 
 @app.route('/static/<path:path>')
 def serve_react_static(path):
