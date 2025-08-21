@@ -41,3 +41,4 @@ whale_env/
 .env*
 whale_env/
 *.db
+!whale-dashboard/build
