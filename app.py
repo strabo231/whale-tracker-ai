@@ -896,7 +896,7 @@ const WhaleDashboard = () => {
         
         <div className="flex items-center space-x-4">
           <div className="bg-green-500/20 px-4 py-2 rounded-full border border-green-500/50">
-            <span className="text-green-400 font-bold">🟢 LIVE</span>
+            <div className="text-6xl mb-4 animate-bounce">\&#128994;</div>
           </div>
           <div className="bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
             <span className="text-orange-400 font-bold">🏠 8 Days Left</span>
