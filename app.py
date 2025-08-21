@@ -457,6 +457,11 @@ def serve_react_static(path):
         return send_from_directory('whale-dashboard/build/static', path)
     except FileNotFoundError:
         return jsonify({'error': 'Static file not found'}), 404
+        
+@app.route('/static/static/<path:path>')
+def serve_double_static(path):
+    """Handle React's double static path"""
+    return send_from_directory('whale-dashboard/build/static', path)
 
 @app.route('/dashboard/<path:path>')
 def dashboard_catch_all(path):
