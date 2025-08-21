@@ -793,10 +793,7 @@ def success():
     )
 
 # FIXED DASHBOARD ROUTES
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-
-const WhaleDashboard = () => {
+  const WhaleDashboard = () => {
   const [whaleData, setWhaleData] = useState([]);
   const [totalVolume, setTotalVolume] = useState(0);
   const [activeWhales, setActiveWhales] = useState(0);
