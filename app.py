@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template_string, redirect
+from flask import Flask, jsonify, request, render_template_string, redirect, send_from_directory
 import stripe
 import os
 import logging
@@ -22,9 +22,9 @@ DOMAIN = os.getenv('DOMAIN', 'https://whale-tracker-ai.up.railway.app')
 # Price IDs - YOUR ACTUAL STRIPE PRICE IDS
 PRICE_IDS = {
     'professional': 'price_1RyKygRkVYDUbhIFgs8JUTTR',  # Professional $49/month
-    'emergency': 'price_1RyJOzDfwP4gynpjh4mO6b6B',     # Help Save Home $199/month  
-    'enterprise': 'price_1RyJR4DfwP4gynpj3sURTxuU',    # Enterprise $899/month
-    'lifetime': 'price_1RyJS8DfwP4gynpjb23JQGGn',      # Lifetime $2,999 one-time
+    'emergency': 'price_1RyapeRkVYDUbhIFwSQYNIAw',     # Help Save Home $199/month  
+    'enterprise': 'price_1Ryar9RkVYDUbhIFr4Oe7N9C',    # Enterprise $899/month
+    'lifetime': 'price_1Ryat4RkVYDUbhIFxohXgOK1',      # Lifetime $2,999 one-time
     'sixmonth': 'price_1RyJOzDfwP4gynpjh4mO6b6B'       # Use Help Save Home for now
 }
 
@@ -403,10 +403,65 @@ def success():
 </html>
     ''', session_id=session_id)
 
+# FIXED DASHBOARD ROUTES
 @app.route('/dashboard')
 def dashboard():
-    """Redirect to React dashboard"""
-    return redirect('/whale-dashboard/build/index.html')
+    """Serve React dashboard"""
+    try:
+        return send_from_directory('whale-dashboard/build', 'index.html')
+    except FileNotFoundError:
+        # Fallback if React build doesn't exist
+        return render_template_string('''
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold mb-4">🎉 Welcome to Whale Tracker Pro!</h1>
+        <p class="text-xl mb-6">Your dashboard is being prepared...</p>
+        <p class="text-gray-400 mb-8">Full access will be granted within 24 hours.</p>
+        
+        <div class="bg-black/40 rounded-xl p-6 max-w-md mx-auto mb-8">
+            <h3 class="text-lg font-bold mb-4">🐋 What You'll Get:</h3>
+            <ul class="text-left space-y-2 text-gray-300">
+                <li>• Real-time whale discovery</li>
+                <li>• Reddit community scanning</li>
+                <li>• Ethereum + Solana tracking</li>
+                <li>• AI-powered insights</li>
+                <li>• Live market alerts</li>
+            </ul>
+        </div>
+        
+        <a href="/" class="inline-block px-6 py-3 bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
+            Back to Home
+        </a>
+        
+        <p class="text-sm text-gray-500 mt-6">
+            Questions? Contact: sean@whale-tracker.pro
+        </p>
+    </div>
+</body>
+</html>
+        ''')
+
+@app.route('/static/<path:path>')
+def serve_react_static(path):
+    """Serve React static files (CSS, JS, etc.)"""
+    try:
+        return send_from_directory('whale-dashboard/build/static', path)
+    except FileNotFoundError:
+        return jsonify({'error': 'Static file not found'}), 404
+
+@app.route('/dashboard/<path:path>')
+def dashboard_catch_all(path):
+    """Catch-all route for React Router (SPA routing)"""
+    try:
+        return send_from_directory('whale-dashboard/build', 'index.html')
+    except FileNotFoundError:
+        return redirect('/dashboard')
 
 @app.route('/webhook', methods=['POST'])
 def stripe_webhook():
