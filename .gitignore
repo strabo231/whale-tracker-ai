@@ -3,7 +3,7 @@ node_modules/
 whale-dashboard/node_modules/
 
 # Python cache
-__pycache__/
+**pycache**/
 *.pyc
 *.pyo
 *.pyd
@@ -19,8 +19,7 @@ whale_tracker.log
 whales.db
 
 # Environment files
-.env
-.env.local
+.env*
 
 # IDE files
 .vscode/
@@ -33,12 +32,7 @@ Thumbs.db
 # Build files
 dist/
 build/
-.env
-.env
-.env
+!whale-dashboard/build/
+
+# Virtual environment
 whale_env/
-*.db
-.env*
-whale_env/
-*.db
-!whale-dashboard/build
