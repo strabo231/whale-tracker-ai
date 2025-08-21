@@ -887,7 +887,7 @@ const WhaleDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <div className="text-4xl">🐋</div>
+          <div className="text-6xl mb-4 animate-bounce">&#128011;</div>
           <div>
             <h1 className="text-3xl font-bold">Whale Tracker Pro</h1>
             <p className="text-gray-400">Live Whale Intelligence Dashboard</p>
