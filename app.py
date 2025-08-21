@@ -512,7 +512,18 @@ def stripe_webhook():
         elif event['type'] == 'customer.subscription.deleted':
             subscription = event['data']['object']
             logger.info(f"❌ Subscription canceled: {subscription['id']}")
+                      
+            # TODO: Revoke user access
             
+        return jsonify({'status': 'success'})
+        
+    except ValueError as e:
+        logger.error(f"❌ Invalid payload: {e}")
+        return jsonify({'error': 'Invalid payload'}), 400
+    except stripe.error.SignatureVerificationError as e:
+        logger.error(f"❌ Invalid signature: {e}")
+        return jsonify({'error': 'Invalid signature'}), 400
+
 # Add this route to your app.py (after your existing routes)
 
 @app.route('/roadmap')
@@ -861,17 +872,7 @@ def roadmap():
 # Also add this to your home page navigation - update the header section in your home() function
 # Add this link to the header:
 # <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
-            
-            # TODO: Revoke user access
-            
-        return jsonify({'status': 'success'})
-        
-    except ValueError as e:
-        logger.error(f"❌ Invalid payload: {e}")
-        return jsonify({'error': 'Invalid payload'}), 400
-    except stripe.error.SignatureVerificationError as e:
-        logger.error(f"❌ Invalid signature: {e}")
-        return jsonify({'error': 'Invalid signature'}), 400
+
 
 if __name__ == '__main__':
     if not stripe.api_key:
