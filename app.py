@@ -85,6 +85,7 @@ def home():
                 </div>
             </div>
             <div class="flex items-center space-x-4">
+                <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
                 <a href="/dashboard" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
                     Access Dashboard
                 </a>
@@ -511,6 +512,355 @@ def stripe_webhook():
         elif event['type'] == 'customer.subscription.deleted':
             subscription = event['data']['object']
             logger.info(f"❌ Subscription canceled: {subscription['id']}")
+            
+# Add this route to your app.py (after your existing routes)
+
+@app.route('/roadmap')
+def roadmap():
+    """Epic development roadmap page"""
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Roadmap - Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .milestone-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .milestone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black/20 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-purple-500 to-cyan-500 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                        Whale Tracker Pro
+                    </h1>
+                    <p class="text-gray-400 text-sm">Development Roadmap</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="/dashboard" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                The <span class="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Future</span>
+                <br>of Whale Tracking
+            </h1>
+            
+            <p class="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                Community-funded innovation meets cutting-edge technology. 
+                <strong class="text-orange-400">Your support builds the most advanced whale tracker ever created.</strong>
+            </p>
+
+            <!-- Current Progress -->
+            <div class="bg-black/40 backdrop-blur-sm border border-green-500/50 rounded-xl p-8 max-w-2xl mx-auto mb-12">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold">🎯 Current Progress</h3>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-bold">PHASE 0 COMPLETE</span>
+                </div>
+                
+                <div class="w-full bg-gray-700 rounded-full h-4 mb-4">
+                    <div class="progress-bar h-4 rounded-full" style="width: 15%"></div>
+                </div>
+                
+                <div class="flex justify-between text-sm text-gray-300">
+                    <span>$0 MRR</span>
+                    <span class="font-bold text-purple-400">Next: $50K MRR</span>
+                </div>
+                
+                <p class="text-gray-400 text-sm mt-3">
+                    ✅ Payment system live &nbsp;•&nbsp; ✅ Basic dashboard &nbsp;•&nbsp; ✅ Stripe integration
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Milestones -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Revenue-Based Development Milestones</h2>
+                <p class="text-gray-400 text-lg">Every dollar funds the next breakthrough</p>
+            </div>
+            
+            <div class="space-y-8">
+                
+                <!-- Phase 1 -->
+                <div class="milestone-card bg-black/40 backdrop-blur-sm border border-emerald-500/50 rounded-xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-emerald-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">1</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-emerald-400">Infrastructure Upgrade</h3>
+                                <p class="text-gray-400">$50K Monthly Recurring Revenue</p>
+                            </div>
+                        </div>
+                        <span class="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-full font-bold">7-10 DAYS</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-white mb-3">🚀 Performance Upgrades</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• Enterprise-grade servers (99.9% uptime)</li>
+                                <li>• Advanced API architecture with gRPC</li>
+                                <li>• Sub-second real-time data streams</li>
+                                <li>• Enhanced whale discovery algorithms</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3">🌐 Multi-Network Expansion</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• Polygon integration</li>
+                                <li>• Arbitrum whale tracking</li>
+                                <li>• Binance Smart Chain support</li>
+                                <li>• Avalanche network monitoring</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="milestone-card bg-black/40 backdrop-blur-sm border border-blue-500/50 rounded-xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">2</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-blue-400">Adaptive AI Trading Bot</h3>
+                                <p class="text-gray-400">$100K Monthly Recurring Revenue</p>
+                            </div>
+                        </div>
+                        <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full font-bold">2-4 WEEKS</span>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-6 mb-6">
+                        <h4 class="font-bold text-blue-400 mb-2">🤖 World's First Web3 Adaptive Trading AI</h4>
+                        <p class="text-gray-300">Revolutionary AI that learns YOUR trading style and adapts its strategy accordingly.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <h4 class="font-bold text-white mb-3">🎯 Three Modes</h4>
+                            <ul class="space-y-2 text-gray-300 text-sm">
+                                <li>• Full automation</li>
+                                <li>• Guided assistance</li>
+                                <li>• Advisory-only</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3">🔒 Security</h4>
+                            <ul class="space-y-2 text-gray-300 text-sm">
+                                <li>• Military-grade encryption</li>
+                                <li>• Zero-knowledge architecture</li>
+                                <li>• Privacy-first design</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3">⚡ Features</h4>
+                            <ul class="space-y-2 text-gray-300 text-sm">
+                                <li>• 1.5% transaction sniping</li>
+                                <li>• Risk management</li>
+                                <li>• Custom safety limits</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="milestone-card bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-purple-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">3</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-purple-400">Mobile & Desktop Apps</h3>
+                                <p class="text-gray-400">$150K Monthly Recurring Revenue</p>
+                            </div>
+                        </div>
+                        <span class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full font-bold">6-8 WEEKS</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-white mb-3">📱 Mobile Apps</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• Native iOS & Android apps</li>
+                                <li>• Real-time push notifications</li>
+                                <li>• Offline mode for essential features</li>
+                                <li>• Advanced mobile charting</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3">💻 Desktop Apps</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• Cross-platform (Windows, macOS, Linux)</li>
+                                <li>• Unified experience across devices</li>
+                                <li>• Professional-grade analytics</li>
+                                <li>• Portfolio management suite</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="milestone-card bg-black/40 backdrop-blur-sm border border-orange-500/50 rounded-xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-orange-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">4</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-orange-400">Enterprise & Compliance</h3>
+                                <p class="text-gray-400">$300K Monthly Recurring Revenue</p>
+                            </div>
+                        </div>
+                        <span class="px-4 py-2 bg-orange-500/20 text-orange-400 rounded-full font-bold">3-6 MONTHS</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-white mb-3">🏢 Enterprise Solutions</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• Dedicated enterprise servers</li>
+                                <li>• Corporate licensing program</li>
+                                <li>• White-label solutions</li>
+                                <li>• Custom integrations</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white mb-3">⚖️ Regulatory Compliance</h4>
+                            <ul class="space-y-2 text-gray-300">
+                                <li>• SEC registration process</li>
+                                <li>• Integrated trading platform</li>
+                                <li>• Full brokerage features</li>
+                                <li>• Institutional-grade security</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Benefits -->
+    <section class="py-20 bg-black/20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">🎁 Investor Benefits</h2>
+                <p class="text-gray-400 text-lg">Early supporters get exclusive rewards</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Early Supporters -->
+                <div class="bg-black/40 backdrop-blur-sm border border-cyan-500/50 rounded-xl p-8">
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-6">🌟 Early Supporters (All Subscribers)</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3"></div>
+                            Lifetime price lock - your rate never increases
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3"></div>
+                            First access to all new features
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3"></div>
+                            Priority support and direct developer contact
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3"></div>
+                            Community governance - vote on feature priorities
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Major Contributors -->
+                <div class="bg-black/40 backdrop-blur-sm border border-gold-500/50 rounded-xl p-8 border-yellow-500/50">
+                    <h3 class="text-2xl font-bold text-yellow-400 mb-6">👑 Major Contributors ($50K+ Annual)</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                            <strong class="text-yellow-400">10% lifetime profit sharing</strong> from company revenues
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                            Advisory board position with quarterly strategy calls
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                            Custom feature development tailored to your needs
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                            Exclusive alpha access to unreleased tools
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ready to Build the Future?</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Join the revolution in whale tracking technology while helping save our family home.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/#pricing" class="px-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white text-lg hover:opacity-90 transition-opacity">
+                    🚀 Start Your Subscription
+                </a>
+                <a href="/dashboard" class="px-8 py-4 border border-gray-600 rounded-lg font-semibold text-white hover:bg-white/10 transition-colors">
+                    View Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400">
+            <p>&copy; 2025 Whale Tracker Pro. Community-funded innovation for the crypto revolution. 🐋</p>
+        </div>
+    </footer>
+</body>
+</html>
+    ''')
+
+# Also add this to your home page navigation - update the header section in your home() function
+# Add this link to the header:
+# <a href="/roadmap" class="text-gray-400 hover:text-white transition-colors">Roadmap</a>
             
             # TODO: Revoke user access
             
