@@ -389,6 +389,10 @@ def home():
 </body>
 </html>
     ''', stripe_publishable_key=STRIPE_PUBLISHABLE_KEY)
+    
+@app.route('/', methods=['POST'])
+def home_post():
+    return redirect('/')
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
