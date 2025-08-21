@@ -451,6 +451,9 @@ def dashboard():
 def serve_react_static(path):
     """Serve React static files (CSS, JS, etc.)"""
     try:
+        if path.startswith('static/'):
+            # Remove the extra 'static/' prefix
+            path = path[7:]  # Remove 'static/' from beginning
         return send_from_directory('whale-dashboard/build/static', path)
     except FileNotFoundError:
         return jsonify({'error': 'Static file not found'}), 404
