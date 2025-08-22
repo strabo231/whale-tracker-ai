@@ -36,3 +36,4 @@ build/
 
 # Virtual environment
 whale_env/
+*.backup_*
