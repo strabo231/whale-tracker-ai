@@ -64,7 +64,7 @@ def create_checkout_session():
         PRICING = {
             'professional': {'price_id': 'price_1RyKygRkVYDUbhIFgs8JUTTR', 'mode': 'subscription'},
             'emergency': {'price_id': 'price_1RyapeRkVYDUbhIFwSQYNIAw', 'mode': 'subscription'},
-            'enterprise': {'price_id': 'price_1Ryar9RkVYDUbhIFr4Oe7N9C', {
+            'enterprise': {'price_id': 'price_1Ryar9RkVYDUbhIFr4Oe7N9C', 'mode': 'payment'},
                 'price_id': 'price_1Ryat4RkVYDUbhIFxohXgOK1', 'mode': 'payment'},
             'sixmonth': {'price_id': 'price_1RyJOzDfwP4gynpjh4mO6b6B', 'mode': 'payment'},
             'house_hero': {'amount': 50000, 'mode': 'payment'},
