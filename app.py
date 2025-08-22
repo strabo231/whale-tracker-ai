@@ -1156,7 +1156,7 @@ const WhaleDashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">🐋</div>
+          <div className="text-6xl mb-4 animate-bounce">WHALE</div>
           <div className="text-2xl font-bold text-white mb-2">Hunting for Whales...</div>
           <div className="text-gray-400">Scanning blockchain for massive movements</div>
         </div>
@@ -1170,7 +1170,7 @@ const WhaleDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <div className="text-4xl">🐋</div>
+          <div className="text-4xl">WHALE</div>
           <div>
             <h1 className="text-3xl font-bold">Whale Tracker Pro</h1>
             <p className="text-gray-400">Live Whale Intelligence Dashboard</p>
@@ -1195,7 +1195,7 @@ const WhaleDashboard = () => {
               <p className="text-gray-400 text-sm">Active Whales</p>
               <p className="text-3xl font-bold text-green-400">{activeWhales}</p>
             </div>
-            <div className="text-3xl">🐋</div>
+            <div className="text-3xl">WHALE</div>
           </div>
           <p className="text-gray-400 text-xs mt-2">+8 new this hour</p>
         </div>
