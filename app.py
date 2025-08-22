@@ -1182,7 +1182,7 @@ const WhaleDashboard = () => {
             <span className="text-green-400 font-bold">LIVE</span>
           </div>
           <div className="bg-orange-500/20 px-4 py-2 rounded-full border border-orange-500/50">
-            <span className="text-orange-400 font-bold">🏠 8 Days Left</span>
+            <span className="text-orange-400 font-bold">HOME< 8 Days Left</span>
           </div>
         </div>
       </div>
@@ -1206,7 +1206,7 @@ const WhaleDashboard = () => {
               <p className="text-gray-400 text-sm">24h Volume</p>
               <p className="text-3xl font-bold text-blue-400">${(totalVolume/1000000).toFixed(1)}M</p>
             </div>
-            <div className="text-3xl">💰</div>
+            <div className="text-3xl">HOME</div>
           </div>
           <p className="text-gray-400 text-xs mt-2">+23% from yesterday</p>
         </div>
@@ -1217,7 +1217,7 @@ const WhaleDashboard = () => {
               <p className="text-gray-400 text-sm">Alerts Sent</p>
               <p className="text-3xl font-bold text-purple-400">1,247</p>
             </div>
-            <div className="text-3xl">🚨</div>
+            <div className="text-3xl">ALERT</div>
           </div>
           <p className="text-gray-400 text-xs mt-2">Last alert: 2 min ago</p>
         </div>
@@ -1228,7 +1228,7 @@ const WhaleDashboard = () => {
               <p className="text-gray-400 text-sm">House Fund</p>
               <p className="text-3xl font-bold text-orange-400">$12,847</p>
             </div>
-            <div className="text-3xl">🏠</div>
+            <div className="text-3xl">HOME</div>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
             <div className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full" style={{width: '23%'}}></div>
@@ -1352,7 +1352,7 @@ const WhaleDashboard = () => {
 
       {/* Bottom Banner */}
       <div className="mt-8 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl p-6 text-center">
-        <h3 className="text-2xl font-bold text-red-400 mb-2">🚨 URGENT: Help Save Our Home!</h3>
+        <h3 className="text-2xl font-bold text-red-400 mb-2">ALERT< URGENT: Help Save Our Home!</h3>
         <p className="text-gray-300 mb-4">
           House auction in 8 days. Every subscription helps save our special needs son's home.
         </p>
