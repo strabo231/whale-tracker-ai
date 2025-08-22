@@ -12,7 +12,6 @@ from datetime import datetime
 def create_whale_tracker_tables():
     print("🗄️ Creating whale tracker database tables...")
     
-    # Database connection
     try:
         conn = psycopg2.connect(
             host="127.0.0.1",
@@ -26,16 +25,9 @@ def create_whale_tracker_tables():
         
         print("✅ Connected to whale_tracker database!")
         
-        # Create tables
         create_tables(cursor)
-        
-        # Insert sample data
         insert_sample_data(cursor)
-        
-        # Create indexes
         create_indexes(cursor)
-        
-        # Test the setup
         test_database(cursor)
         
         conn.close()
@@ -50,7 +42,6 @@ def create_whale_tracker_tables():
 def create_tables(cursor):
     print("📊 Creating database tables...")
     
-    # Main whale tracking table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS whales (
             id SERIAL PRIMARY KEY,
@@ -76,7 +67,6 @@ def create_tables(cursor):
         )
     ''')
     
-    # Transaction history
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS whale_transactions (
             id SERIAL PRIMARY KEY,
@@ -99,7 +89,6 @@ def create_tables(cursor):
         )
     ''')
     
-    # Smart alerts
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS smart_alerts (
             id SERIAL PRIMARY KEY,
@@ -119,7 +108,6 @@ def create_tables(cursor):
         )
     ''')
     
-    # Tokens
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tokens (
             id SERIAL PRIMARY KEY,
@@ -138,7 +126,6 @@ def create_tables(cursor):
         )
     ''')
     
-    # Users
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -155,7 +142,15 @@ def create_tables(cursor):
         )
     ''')
     
-    # Add foreign key constraint
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS donations (
+            charge_id VARCHAR(255) PRIMARY KEY,
+            amount DECIMAL(10,2) NOT NULL,
+            type VARCHAR(20) NOT NULL CHECK (type IN ('crypto', 'fiat')),
+            timestamp TIMESTAMP DEFAULT NOW()
+        )
+    ''')
+    
     cursor.execute('''
         DO $$ 
         BEGIN
@@ -175,7 +170,6 @@ def create_tables(cursor):
 def insert_sample_data(cursor):
     print("📊 Inserting sample whale data...")
     
-    # Sample whales
     whales_data = [
         ('8K7x9mP2nQ5rL3vW1cF6sM8dY4tR7uE9', 'Alpha Hunter', 92, 78.5, 145.2, 15600000, 'Scalper', 'High', '2024-08-12 12:00:00', 156, 122),
         ('3M9s7kL4pN2qV8xZ5bG1wC9fT6rY3uA7', 'Solana Sage', 89, 82.1, 98.7, 8900000, 'Swing', 'High', '2024-08-12 11:32:00', 89, 73),
@@ -191,7 +185,6 @@ def insert_sample_data(cursor):
         ON CONFLICT (address) DO NOTHING
     ''', whales_data)
     
-    # Sample tokens
     tokens_data = [
         ('SOL', 'So11111111111111111111111111111111111111112', 'Solana', 9, 95, True),
         ('BONK', 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', 'Bonk', 5, 87, True),
@@ -206,7 +199,6 @@ def insert_sample_data(cursor):
         ON CONFLICT (symbol) DO NOTHING
     ''', tokens_data)
     
-    # Sample transactions
     transactions_data = [
         ('8K7x9mP2nQ5rL3vW1cF6sM8dY4tR7uE9', 'BONK', 'buy', 2400000000, 890000, 'High', 'tx_bonk_buy_001', '2024-08-12 11:48:00'),
         ('3M9s7kL4pN2qV8xZ5bG1wC9fT6rY3uA7', 'JUP', 'sell', 50000000, 450000, 'High', 'tx_jup_sell_001', '2024-08-12 11:32:00'),
@@ -222,7 +214,6 @@ def insert_sample_data(cursor):
         ON CONFLICT (transaction_hash) DO NOTHING
     ''', transactions_data)
     
-    # Sample alerts
     alerts_data = [
         ('pattern', '3 Top Whales Accumulating BONK', 'Alpha Hunter, Solana Sage, and 1 other high-success whale bought BONK in last 2h', 'High', ['8K7x9mP2nQ5rL3vW1cF6sM8dY4tR7uE9', '3M9s7kL4pN2qV8xZ5bG1wC9fT6rY3uA7'], 'BONK', 1),
         ('rotation', 'Smart Money Rotating: JUP → RAY', 'Top 5 whales moving positions from JUP to RAY tokens', 'Medium', ['3M9s7kL4pN2qV8xZ5bG1wC9fT6rY3uA7', '7R2n5wX8mK1dF4sL9pQ3vB6tY8rU2cA5'], 'RAY', 2),
@@ -249,7 +240,8 @@ def create_indexes(cursor):
         'CREATE INDEX IF NOT EXISTS idx_transactions_token ON whale_transactions(token_symbol)',
         'CREATE INDEX IF NOT EXISTS idx_alerts_created_at ON smart_alerts(created_at DESC)',
         'CREATE INDEX IF NOT EXISTS idx_alerts_active ON smart_alerts(is_active) WHERE is_active = true',
-        'CREATE INDEX IF NOT EXISTS idx_tokens_symbol ON tokens(symbol)'
+        'CREATE INDEX IF NOT EXISTS idx_tokens_symbol ON tokens(symbol)',
+        'CREATE INDEX IF NOT EXISTS idx_donations_timestamp ON donations(timestamp DESC)'
     ]
     
     for index in indexes:
@@ -260,7 +252,6 @@ def create_indexes(cursor):
 def test_database(cursor):
     print("\n🧪 Testing database...")
     
-    # Test whale query
     cursor.execute('SELECT nickname, success_score, win_rate, total_value FROM whales ORDER BY success_score DESC LIMIT 3')
     whales = cursor.fetchall()
     
@@ -268,7 +259,6 @@ def test_database(cursor):
     for whale in whales:
         print(f"  • {whale[0]}: Score {whale[1]}, Win Rate {whale[2]}%, Value ${whale[3]:,}")
     
-    # Test transaction query
     cursor.execute('''
         SELECT w.nickname, wt.action, wt.token_symbol, wt.usd_value, wt.timestamp
         FROM whale_transactions wt 
@@ -281,13 +271,19 @@ def test_database(cursor):
     for tx in transactions:
         print(f"  • {tx[0]}: {tx[1].upper()} {tx[2]} for ${tx[3]:,}")
     
-    # Test alert query
     cursor.execute('SELECT title, confidence_level FROM smart_alerts WHERE is_active = true ORDER BY created_at DESC LIMIT 2')
     alerts = cursor.fetchall()
     
     print("\n🚨 Active Alerts:")
     for alert in alerts:
         print(f"  • {alert[0]} ({alert[1]} confidence)")
+    
+    cursor.execute('SELECT charge_id, amount, type, timestamp FROM donations ORDER BY timestamp DESC LIMIT 2')
+    donations = cursor.fetchall()
+    
+    print("\n💸 Recent Donations:")
+    for donation in donations:
+        print(f"  • {donation[0]}: ${donation[1]} ({donation[2]}) at {donation[3]}")
     
     print("\n✅ Database test successful!")
 
@@ -301,15 +297,17 @@ DB_PORT=5432
 DB_NAME=whale_tracker
 DB_USER=sean
 DB_PASSWORD=whale123
-
-# API Keys (add your actual keys)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+COINBASE_API_KEY=api_...
+COINBASE_WEBHOOK_SECRET=whsec_...
+DOMAIN=https://whale-tracker-ai.up.railway.app
 OPENAI_API_KEY=your_openai_api_key_here
 REDDIT_CLIENT_ID=your_reddit_client_id_here
 REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
 REDDIT_USERNAME=your_reddit_username_here
 REDDIT_PASSWORD=your_reddit_password_here
-
-# Application Settings
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=INFO

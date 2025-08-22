@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whale Tracker Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen text-white">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">🐋 Whale Tracker Pro</h1>
+        <p class="text-xl text-gray-300 text-center mb-12">Track Ethereum & Solana whales and support our mission to save our family home!</p>
+
+        <!-- Donation Section -->
+        <div class="bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Make a Donation</h2>
+            <input type="range" id="donationSlider" min="49" max="10000" value="49" class="w-full mb-4">
+            <div class="text-center mb-4">Donation Amount: $<span id="donationAmount">49</span></div>
+            <div class="flex justify-center gap-4">
+                <button onclick="donateCustom('crypto')" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold hover:opacity-90">Donate with Crypto</button>
+                <button onclick="donateCustom('fiat')" class="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg font-semibold hover:opacity-90">Donate with Card</button>
+            </div>
+        </div>
+
+        <!-- Subscription/Crowdfunding Tiers -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-6">
+                <h3 class="text-xl font-bold">Professional</h3>
+                <p class="text-gray-300">$49/month - Advanced whale tracking</p>
+                <button onclick="subscribe('professional')" class="mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold hover:opacity-90">Subscribe</button>
+            </div>
+            <div class="bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-6">
+                <h3 class="text-xl font-bold">House Hero</h3>
+                <p class="text-gray-300">$500 one-time - 1-year access</p>
+                <button onclick="subscribe('house_hero', 'crowdfund')" class="mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold hover:opacity-90">Contribute</button>
+            </div>
+            <div class="bg-black/40 backdrop-blur-sm border border-purple-500/50 rounded-xl p-6">
+                <h3 class="text-xl font-bold">Family Guardian</h3>
+                <p class="text-gray-300">$1,500 one-time - 2 years + 3% profit share</p>
+                <button onclick="subscribe('family_guardian', 'crowdfund')" class="mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold hover:opacity-90">Contribute</button>
+            </div>
+            <!-- Add more tiers (e.g., life_changer, legend) as needed -->
+        </div>
+    </div>
+
+    <script>
+        // Update donation amount display
+        document.getElementById('donationSlider').addEventListener('input', function() {
+            document.getElementById('donationAmount').textContent = this.value;
+        });
+
+        async function donateCustom(method) {
+            try {
+                const amount = parseInt(document.getElementById('donationSlider').value);
+                if (!amount || amount < 49 || amount > 10000) {
+                    alert('Please select an amount between $49 and $10,000.');
+                    return;
+                }
+                console.log('Initiating donation:', { method, amount });
+                const response = await fetch('/create-donation-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, method })
+                });
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                if (method === 'crypto') {
+                    window.location.href = data.url; // Redirect to Coinbase payment page
+                } else {
+                    const stripe = Stripe('{{ stripe_publishable_key }}');
+                    const result = await stripe.redirectToCheckout({ sessionId: data.id });
+                    if (result.error) {
+                        alert('Payment error: ' + result.error.message);
+                    }
+                }
+            } catch (error) {
+                console.error('Donation error:', error);
+                alert('Payment system error. Please try again.');
+            }
+        }
+
+        async function subscribe(plan, type = 'subscription') {
+            try {
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan, type })
+                });
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                const stripe = Stripe('{{ stripe_publishable_key }}');
+                const result = await stripe.redirectToCheckout({ sessionId: data.id });
+                if (result.error) {
+                    alert('Payment error: ' + result.error.message);
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                alert('Payment system error. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
