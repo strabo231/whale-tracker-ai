@@ -31,7 +31,8 @@ PRICE_IDS = {
 @app.route('/')
 def home():
     """Main subscription page with real Stripe integration"""
-    return render_template_string('''
+    try:
+        return render_template_string('''
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,13 +41,34 @@ def home():
     <title>Whale Tracker Pro - Get Access</title>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'green-400': '#4ade80',
+                        'blue-400': '#60a5fa', 
+                        'purple-400': '#a78bfa',
+                        'orange-400': '#fb923c',
+                        'red-400': '#f87171'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
             min-height: 100vh;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         .tier-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 2rem;
         }
         .tier-card:hover {
             transform: translateY(-8px);
@@ -60,6 +82,23 @@ def home():
             0%, 100% { opacity: 1; }
             50% { opacity: 0.8; }
         }
+        .text-green-400 { color: #4ade80; }
+        .text-blue-400 { color: #60a5fa; }
+        .text-purple-400 { color: #a78bfa; }
+        .text-orange-400 { color: #fb923c; }
+        .text-red-400 { color: #f87171; }
+        .text-yellow-400 { color: #facc15; }
+        .text-cyan-400 { color: #22d3ee; }
+        .bg-green-500 { background-color: #22c55e; }
+        .bg-blue-500 { background-color: #3b82f6; }
+        .bg-purple-500 { background-color: #8b5cf6; }
+        .bg-red-500 { background-color: #ef4444; }
+        .border-green-500 { border-color: #22c55e; }
+        .border-blue-500 { border-color: #3b82f6; }
+        .border-purple-500 { border-color: #8b5cf6; }
+        .border-orange-500 { border-color: #f97316; }
+        .border-red-500 { border-color: #ef4444; }
+        .border-yellow-500 { border-color: #eab308; }
     </style>
 </head>
 <body class="text-white">
@@ -133,25 +172,25 @@ def home():
                 </div>
                 
                 <ul class="space-y-3 mb-8">
-                    <li class="flex items-center text-green-400">
+                    <li class="flex items-center" style="color: #4ade80;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                         ETH + SOL whale discovery
                     </li>
-                    <li class="flex items-center text-green-400">
+                    <li class="flex items-center" style="color: #4ade80;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                         Reddit community scanning
                     </li>
-                    <li class="flex items-center text-green-400">
+                    <li class="flex items-center" style="color: #4ade80;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                         Up to 100 tracked whales
                     </li>
-                    <li class="flex items-center text-green-400">
+                    <li class="flex items-center" style="color: #4ade80;">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
@@ -675,6 +714,9 @@ def home():
 </body>
 </html>
     ''', stripe_publishable_key=STRIPE_PUBLISHABLE_KEY)
+    except Exception as e:
+        logger.error(f"❌ Error rendering home page: {e}")
+        return f"Error loading page: {e}", 500
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -687,10 +729,10 @@ def create_checkout_session():
         
         # Define all pricing
         PRICING = {
-            # Monthly subscriptions
+            # Monthly subscriptions - Updated price IDs from your enhanced file
             'professional': {'price_id': 'price_1RyKygRkVYDUbhIFgs8JUTTR', 'mode': 'subscription'},
-            'emergency': {'price_id': 'price_1RyapeRkVYDUbhIFwSQYNIAw', 'mode': 'subscription'},
-            'enterprise': {'price_id': 'price_1Ryar9RkVYDUbhIFr4Oe7N9C', 'mode': 'subscription'},
+            'emergency': {'price_id': 'price_1RyJOzDfwP4gynpjh4mO6b6B', 'mode': 'subscription'},  # Updated
+            'enterprise': {'price_id': 'price_1RyJR4DfwP4gynpj3sURTxuU', 'mode': 'subscription'},  # Updated
             
             # One-time crowdfund tiers
             'house_hero': {'amount': 50000, 'mode': 'payment'},        # $500
@@ -698,8 +740,8 @@ def create_checkout_session():
             'life_changer': {'amount': 500000, 'mode': 'payment'},      # $5,000
             'legend': {'amount': 1000000, 'mode': 'payment'},           # $10,000
             
-            # Existing one-time
-            'lifetime': {'price_id': 'price_1Ryat4RkVYDUbhIFxohXgOK1', 'mode': 'payment'},
+            # Existing one-time - Updated price ID
+            'lifetime': {'price_id': 'price_1RyJS8DfwP4gynpjb23JQGGn', 'mode': 'payment'},
         }
         
         # Handle custom donations
@@ -740,7 +782,7 @@ def create_checkout_session():
             tier_details = {
                 'house_hero': {
                     'name': '🏠 House Hero - Save Our Home',
-                    'description': '1 year premium access + Hero badge + Help save our family home',
+                    'description': '1 year premium access + Hero badge + Help save our family home from foreclosure',
                     'benefits': ['1 Year Premium Access', 'Hero Badge in Dashboard', 'Monthly Progress Updates', 'Help Save Our Home']
                 },
                 'family_guardian': {
@@ -755,7 +797,7 @@ def create_checkout_session():
                 },
                 'legend': {
                     'name': '🌟 Legend Status - Ultimate Supporter',
-                    'description': 'Everything + Legend badge + Advisory board + 10% profit sharing',
+                    'description': 'Everything + Legend badge + Advisory board + 10% profit sharing for life',
                     'benefits': ['Everything in Life Changer', 'Legend Badge + Co-branding', 'Advisory Board Position', '10% Profit Sharing for Life']
                 }
             }
