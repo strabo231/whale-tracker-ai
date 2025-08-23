@@ -63,10 +63,10 @@ app.config.from_object(config)
 # Initialize extensions
 CORS(app)
 limiter = Limiter(
-    app,
-    key_func=get_remote_address,
+    key_func=get_remote_address,  # key_func first
+    app=app,  # app second
     default_limits=["1000 per day", "100 per hour"],
-    storage_uri=config.RATE_LIMIT_STORAGE_URL
+    storage_uri=getattr(config, 'RATE_LIMIT_STORAGE_URL', 'memory://')  # safe fallback
 )
 
 # Global Trading AI instance
