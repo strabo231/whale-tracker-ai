@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-white antialiased;
+  }
+}
+
+@layer components {
+  .whale-gradient {
+    @apply bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
+  }
+  
+  .whale-card {
+    @apply bg-black/40 backdrop-blur-sm border border-gray-800 rounded-xl;
+  }
+}
