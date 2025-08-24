@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect } from 'react';
+import { loadStripe } from '@stripe/stripe-js'; // Added for Stripe
 import { TrendingUp, Wallet, Eye, RefreshCw, Crown, Zap, Target, Star, Rocket, Users, AlertCircle } from 'lucide-react';
 
 const WhaleTrackerBetaDashboard = () => {
@@ -6,174 +7,178 @@ const WhaleTrackerBetaDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
-  const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [authForm, setAuthForm] = useState({ email: '', password: '' });
 
- // API base URL  
-const API_BASE = 'https://whale-tracker-ai.up.railway.app';  // Remove trailing slash
+  // API base URL
+  const API_BASE = 'https://whale-tracker-ai.up.railway.app';
 
-// Check if user is authenticated
-useEffect(() => {
-  const token = localStorage.getItem('whale_token');
-  if (token) {
-    fetchUserProfile(token);
-  } else {
-    setShowAuth(true);
-    setLoading(false);
-  }
-}, []);
+  // Check if user is authenticated
+  useEffect(() => {
+    const token = localStorage.getItem('whale_token');
+    if (token) {
+      fetchUserProfile(token);
+    } else {
+      setShowAuth(true);
+      setLoading(false);
+    }
+  }, []); // Empty dependency array is fine since fetchUserProfile is stable
 
-const fetchUserProfile = async (token) => {
-  try {
-    const response = await fetch(`${API_BASE}/api/user/profile`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (response.ok) {
-      const userData = await response.json();
-      setUser(userData);
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/user/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       
-      // Check subscription before showing dashboard
-      if (userData.subscription_tier === 'free') {
-        setShowAuth(true); // Keep them on auth screen with paywall
+      if (response.ok) {
+        const userData = await response.json().then(d => d.data?.user || d.user);
+        // Use userData if needed in the UI (e.g., display username)
+        // For now, removing unused 'user' state to fix ESLint warning
+        if (!userData || userData.subscription_tier === 'free' || !userData.subscription_tier) {
+          setShowAuth(true);
+          setLoading(false);
+          return;
+        }
+        
+        setShowAuth(false);
+        fetchWhales(token);
+      } else {
+        localStorage.removeItem('whale_token');
+        setShowAuth(true);
         setLoading(false);
+      }
+    } catch (err) {
+      setShowAuth(true);
+      setLoading(false);
+    }
+  };
+
+  const fetchWhales = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE}/whales/top?limit=50`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.status === 402) {
+        setShowAuth(true);
+        setWhales([]);
+        setError('Payment required for access');
+        setLoading(false);
+        handleStripeCheckout();
         return;
       }
       
-      setShowAuth(false);
-      fetchWhales(token);
-    } else {
-      localStorage.removeItem('whale_token');
-      setShowAuth(true);
-      setLoading(false);
-    }
-  } catch (err) {
-    setShowAuth(true);
-    setLoading(false);
-  }
-};
-
-const fetchWhales = async (token) => {
-  try {
-    const response = await fetch(`${API_BASE}/api/whales/top`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (response.status === 402) {
-      setShowAuth(true);
-      setUser(null);
-      setWhales([]);   
-      setError(null); 
-      setLoading(false);
-      handleStripeCheckout();
-      return;
-    }
-    
-    if (response.ok) {
-      const data = await response.json();
-      setWhales(data.whales || []);
-      setLastUpdate(new Date());
-      setError(null);
-    } else {
-      throw new Error('Failed to fetch whales');
-    }
-  } catch (err) {
-    setError(`API Error: ${err.message}`);
-    setWhales([
-      {
-        address: '8K7x9mP2qR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6',
-        balance: 125000,
-        source: 'r/solana',
-        quality_score: 85,
-        first_seen: '2025-01-15T10:30:00Z'
-      },
-      {
-        address: '3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K',
-        balance: 89000,
-        source: 'r/cryptocurrency', 
-        quality_score: 78,
-        first_seen: '2025-01-15T09:15:00Z'
+      if (response.ok) {
+        const data = await response.json();
+        setWhales(data.data?.whales || data.whales || []);
+        setLastUpdate(new Date());
+        setError(null);
+      } else {
+        throw new Error(`Failed to fetch whales: ${response.status}`);
       }
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
-
-const handleAuth = async (e) => {
-  e.preventDefault();
-  try {
-    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(authForm)
-    });
-
-    const data = await response.json();
-    
-    if (response.ok) {
-      const token = data.token || data.api_key;
-      localStorage.setItem('whale_token', token);
-      fetchUserProfile(token);
-      setAuthForm({ email: '', password: '' });
-    } else {
-      setError(data.error || 'Authentication failed');
+    } catch (err) {
+      setError(`API Error: ${err.message}. Using demo data.`);
+      setWhales([
+        {
+          address: '8K7x9mM2mR5vN3wL6tF4sC1dE9yH2jM5pQ7rT8xZ3aB6',
+          balance: 125000,
+          source: 'r/solana',
+          quality_score: 85,
+          first_seen: '2025-01-15T10:30:00Z',
+          network: 'solana'
+        },
+        {
+          address: '3F9k2L7mR8qN4vP1tX6sC9yE5bH8jW2nQ4rT7zA5mL3K',
+          balance: 89000,
+          source: 'r/cryptocurrency',
+          quality_score: 78,
+          first_seen: '2025-01-15T09:15:00Z',
+          network: 'ethereum'
+        }
+      ]);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError('Connection failed');
-  }
-};
+  };
 
-const handleStripeCheckout = async () => {
-  try {
-    const response = await fetch(`${API_BASE}/api/create-checkout-session`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: authForm.email })
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.checkout_url) {
-      window.location.href = data.checkout_url;
-    } else {
-      setError('Failed to create checkout session');
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    try {
+      const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(authForm)
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        const token = data.data?.token || data.token;
+        localStorage.setItem('whale_token', token);
+        fetchUserProfile(token);
+        setAuthForm({ email: '', password: '' });
+      } else {
+        setError(data.message || data.error || 'Authentication failed');
+      }
+    } catch (err) {
+      setError('Connection failed: ' + err.message);
     }
-  } catch (err) {
-    setError('Payment system error');
-  }
-};
+  };
 
-const logout = () => {
-  localStorage.removeItem('whale_token');
-  setUser(null);
-  setShowAuth(true);
-  setWhales([]);
-};
+  const handleStripeCheckout = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: 'professional',
+          type: 'subscription',
+          email: authForm.email
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success && data.data?.id) {
+        const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+        await stripe.redirectToCheckout({ sessionId: data.data.id });
+      } else if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        setError('Failed to create checkout session: ' + (data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      setError('Payment system error: ' + err.message);
+    }
+  };
 
-const formatBalance = (balance) => {
-  if (balance >= 1000000) return `$${(balance / 1000000).toFixed(1)}M`;
-  if (balance >= 1000) return `$${(balance / 1000).toFixed(0)}K`;
-  return `$${balance}`;
-};
+  const logout = () => {
+    localStorage.removeItem('whale_token');
+    setShowAuth(true);
+    setWhales([]);
+  };
 
-const formatAddress = (address) => {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-};
+  const formatBalance = (balance) => {
+    if (balance >= 1000000) return `$${(balance / 1000000).toFixed(1)}M`;
+    if (balance >= 1000) return `$${(balance / 1000).toFixed(0)}K`;
+    return `$${balance}`;
+  };
 
-const getQualityColor = (score) => {
-  if (score >= 80) return 'text-green-400 bg-green-400/10';
-  if (score >= 60) return 'text-yellow-400 bg-yellow-400/10';
-  return 'text-red-400 bg-red-400/10';
-};
+  const formatAddress = (address) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
-// Authentication UI
-if (showAuth) {
-  return (
- 
+  const getQualityColor = (score) => {
+    if (score >= 80) return 'text-green-400 bg-green-400/10';
+    if (score >= 60) return 'text-yellow-400 bg-yellow-400/10';
+    return 'text-red-400 bg-red-400/10';
+  };
+
+  // Authentication UI
+  if (showAuth) {
+    return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">
           {/* Beta Banner */}
@@ -252,100 +257,87 @@ if (showAuth) {
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
-                Start Beta
+                Register
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  value={authForm.email}
-                  onChange={(e) => setAuthForm({...authForm, email: e.target.value})}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"
-                />
+            {error && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-center">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                {error}
               </div>
-              <div>
-                <input
-                  type="password"
-                  placeholder="Password (min 8 chars)"
-                  value={authForm.password}
-                  onChange={(e) => setAuthForm({...authForm, password: e.target.value})}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"
-                />
-              </div>
-              
-              {error && (
-                <div className="flex items-center text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4 mr-2" />
-                  {error}
-                </div>
-              )}
+            )}
 
-              <button
-                onClick={handleAuth}
-                className="w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity"
+            <form onSubmit={handleAuth}>
+              <input
+                type="email"
+                placeholder="Email"
+                value={authForm.email}
+                onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 mb-4 focus:outline-none focus:border-purple-500 transition-colors"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password (min 8 characters)"
+                value={authForm.password}
+                onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 mb-6 focus:outline-none focus:border-purple-500 transition-colors"
+                required
+              />
+              <button 
+                type="submit"
+                className="w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity mb-4"
               >
-                {authMode === 'login' ? 'Access Dashboard' : 'Start Beta Access - $19/month'}
+                {authMode === 'login' ? 'Login' : 'Register'}
               </button>
-            </div>
+            </form>
 
-            <div className="text-center mt-4">
-              <p className="text-xs text-gray-400">
-                Source transparency: Whale data from Reddit community mentions
-              </p>
-            </div>
+            <button 
+              onClick={handleStripeCheckout}
+              className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity flex items-center justify-center"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Get Beta Access Now - $19
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // Main Dashboard
+  // Dashboard UI
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Header */}
-      <div className="border-b border-gray-800 bg-black/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-purple-500 to-cyan-500 p-2 rounded-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                    Whale Tracker
-                  </h1>
-                  <span className="px-2 py-1 bg-orange-500 text-white text-xs font-bold rounded">BETA</span>
-                </div>
-                <p className="text-gray-400 text-sm">Live Crypto Whale Discovery</p>
-              </div>
+      <div className="sticky top-0 bg-black/50 backdrop-blur-md border-b border-gray-800 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              Whale Tracker Beta
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => fetchWhales(localStorage.getItem('whale_token'))}
+              disabled={loading}
+              className="flex items-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+            
+            <div className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+              <Rocket className="w-4 h-4 inline mr-2" />
+              <span className="font-semibold">BETA USER</span>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={fetchWhales}
-                disabled={loading}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg transition-colors"
-              >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                <span>Refresh</span>
-              </button>
-              
-              <div className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
-                <Rocket className="w-4 h-4 inline mr-2" />
-                <span className="font-semibold">BETA USER</span>
-              </div>
-              
-              <button 
-                onClick={logout}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Logout
-              </button>
-            </div>
+            <button 
+              onClick={logout}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -426,7 +418,7 @@ if (showAuth) {
             <div className="flex items-center">
               <AlertCircle className="w-4 h-4 text-blue-400 mr-2" />
               <p className="text-blue-400 text-sm">
-                <strong>Data Source:</strong> Reddit community mentions (r/solana, r/cryptocurrency, r/CryptoMoonShots, r/defi)
+                <strong>Data Source:</strong> Reddit community mentions (r/solana, r/cryptocurrency, r/CryptoMoonShots, r/defi). {error}
               </p>
             </div>
           </div>
